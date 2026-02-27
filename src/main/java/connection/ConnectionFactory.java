@@ -4,6 +4,10 @@
  */
 package connection;
 
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
  *
  * @author 232.004057
@@ -18,11 +22,11 @@ public class ConnectionFactory {
     private static final String PASSWORD = "cimatec";
     
     //métodos
-    public static connection getConnection() {
+    public static Connection getConnection() {
         Connection con = null;
         
         try {
-            class.forName(DRIVER);
+            Class.forName(DRIVER);
             con = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Bando de Dados Conectado");
         } catch (Exception e) {
