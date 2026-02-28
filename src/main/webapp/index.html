@@ -1,46 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SystemStock</title>
-    <link rel="stylesheet" href="CSS/style.css">
-</head>
-
-<body>
-
-    <div class="conteiner">
-
-    <main>
+<html>
+    
+    <head>
+        <link rel="stylesheet" href="CSS/reset.css"/>
+        <link rel="stylesheet" href="CSS/color.css"/>
+        <link rel="stylesheet" href="CSS/login.css"/>
+        <title>Start Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    
+    <body>
         
         <form action="login" method="post">
-            <div class="title">
-                <h1>Faça seu login</h1>
-                <div class="horizontal-bar"></div>
+            
+            <div class="container">
+                
+                <h1>Login</h1>
+                <div>
+                    <label>Usuário</label>
+                    <input type="text" name="users" class="inputUser"/>
+                </div>
+                <div>
+                    <label>Senha</label>
+                    <input type="password" name="passw" class="inputPassword"/>
+                </div>
+                    <button type="submit">Entrar</button>
             </div>
-
-            <div class="inputcamp">
-                <label>Usuário</label>
-                <input type="text" name="users" class="inputbutton"/>
-            </div>
-
-            <div class="inputcamp">
-                <label>Senha</label>
-                <input type="password" name="passw" class="inputbutton"/>
-            </div>
-
-            <div>
-                <button type="submit">Entrar</button>
-            </div>
+            
         </form>
+        
+    </body>
     
-    </main>
-
-    </div>
-
-    <footer></footer>
-
-</body>
-
-</html>
+</html
