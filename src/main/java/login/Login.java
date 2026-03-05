@@ -43,7 +43,7 @@ private static final long serialVersionUID = 1L;
             ResultSet rs = stmt.executeQuery();
             
             if(rs.next()){
-                response.sendRedirect("dashboard.html");
+                response.sendRedirect("pages/dashboard.html");
             }else {
                 out.println("<h2>Dados errados.</h2>");
             }
