@@ -7,7 +7,7 @@ body {
 }
 
 /*conteiner principal*/
-.container {
+.conteiner {
    background-color: var(--while);
    padding: 40px;
    width: 350px;
