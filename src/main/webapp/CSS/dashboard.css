@@ -6,10 +6,9 @@ body {
 
 #header {
     text-align: center;
-    margin-bottom: 30px; 
 }
 
-#tituloDashbord {
+#tituloDashboard {
     font-size: 20px;
     color: var(--primary-dark);
     margin-bottom: 10px;
@@ -35,8 +34,9 @@ body {
 .card-resumo:hover {
     transform: translateY(-5px);
 }
+
 .titulo-card {
-    font-size: 12px;
+    font-size: 20px;
     margin-bottom: 10px;
     color: var(--primary-medium);
 }
@@ -71,12 +71,12 @@ body {
 
 .input-filtro:focus,
 .select-filtro:focus {
-    border-color: var(--primary-medium);
+    border-color: var(--primary-medium); 
 }
 
 .botao-pesquisa
 .btn-pesquisa {
-    margin-top: 10px;
+    margin-top: 0;
     padding: 10px 20px;
     background-color: var(--primary-medium);
     color: var(--white);
@@ -86,7 +86,7 @@ body {
     transition: background-color 0.2s;
 }
 
-.botao-pesquisa:hover
+.botao-pesquisa
 .btn-pesquisa:hover {
     background-color: var(--primary-dark);
 }
@@ -115,4 +115,41 @@ body {
 
 #tabelaEstoque tr:nth-child(even) {
     background-color: var(--gray-light);
+}
+
+#paginacao {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.controle-paginacao label {
+    font-size: 15px;
+    color: var(--primary-dark);
+}
+
+#pagina {
+    border: 1px solid var(--primary-medium);
+    border-radius: 5px;
+}
+
+.conteiner-btn
+#btnVoltar,
+#btnProximo{
+    margin-top: 0;
+    padding: 5px 10px;
+    background-color: var(--primary-medium);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.conteiner-btn
+#btnVoltar
+#btnProximo:hover {
+    background-color: var(--primary-dark);
 }
