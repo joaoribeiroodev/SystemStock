@@ -1,0 +1,118 @@
+body {
+    background-color: var(--gray-light);
+    color: var(--gray-dark);
+    padding: 20px;
+}
+
+#header {
+    text-align: center;
+    margin-bottom: 30px; 
+}
+
+#tituloDashbord {
+    font-size: 20px;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+}
+
+#resumoEstoque {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.card-resumo {
+    background-color: var(--white);
+    box-shadow: 0 4px 6px var(--shadow-default);
+    border-radius: 10px;
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.card-resumo:hover {
+    transform: translateY(-5px);
+}
+.titulo-card {
+    font-size: 12px;
+    margin-bottom: 10px;
+    color: var(--primary-medium);
+}
+
+.valor-card {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--primary-dark);
+}
+
+#filtro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.grupo-filtro {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-filtro,
+.select-filtro {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--gray-medium);
+    outline: none;
+}
+
+.input-filtro:focus,
+.select-filtro:focus {
+    border-color: var(--primary-medium);
+}
+
+.botao-pesquisa
+.btn-pesquisa {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: var(--primary-medium);
+    color: var(--white);
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.botao-pesquisa:hover
+.btn-pesquisa:hover {
+    background-color: var(--primary-dark);
+}
+
+.tabela-wrapper {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--white);
+    box-shadow: 0 4px 6px var(--shadow-default);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#tabelaEstoque th,
+#tabelaEstoque td {
+    padding: 8px 15px;
+    text-align: center;
+    border-bottom: 1px solid var(--primary-dark);
+}
+
+#tabelaEstoque th {
+    background-color: var(--primary-medium);
+    color: var(--white);
+    font-weight: bold;
+}
+
+#tabelaEstoque tr:nth-child(even) {
+    background-color: var(--gray-light);
+}
