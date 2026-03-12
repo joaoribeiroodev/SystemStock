@@ -1,0 +1,35 @@
+name: CI-CD - Build
+
+on:
+    push:
+        branches:
+        - main
+pull_request:
+branches:
+- main
+
+jobs:
+build:
+name: Build projects
+runs-on: ubuntu-latest
+
+steps:
+    - name: Checkout do repositório
+      user: actions/checkout@v4
+
+    - name: Configuração Java 21
+      users: actions/setup-java@v4
+      with: 
+      java-version: '25'
+      distribution: 'temurin'
+      cache: maven
+    
+    - name: Build da aplicação
+      run: mvn clean package -DskipTest
+    
+    - name: Salvar
+      uses: action/uploud-artifact@v4
+      with:
+        name: app-war
+        path: target/*.war
+        retention-day: 7
