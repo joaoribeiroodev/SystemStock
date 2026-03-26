@@ -1,0 +1,128 @@
+:root {
+    /* Cores principais */
+    --primary-dark: #0f4c75;
+    --primary-medium: #3282b8;
+    --primary-light: #bbe1fa;
+
+    /* Cor de ação (botões / confirmação) */
+    --success: #1b9c85;
+    --success-hover: #157a6e;
+
+    /* Neutros */
+    --white: #ffffff;
+    --gray-light: #f5f5f5;
+    --gray-medium: #cccccc;
+    --gray-dark: #333333;
+
+    /* Sombra */
+    --shadow-default: rgba(0, 0, 0, 0.2);
+    
+}
+
+body {
+    background-color: var(--gray-light);
+    color: var(--gray-dark);
+}
+
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--white);
+    padding: 15px 30px;
+    box-shadow: 0 2px 5px var(--shadow-default);
+    margin-bottom: 20px;
+}
+
+#tituloCadastro{
+    font-size: 22px;
+    color: var(--primary-dark);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--primary-medium);
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: var(--primary-dark);
+}
+
+#main {
+    display: flex;
+    justify-content: center;
+}
+
+.container{
+    background-color: var(--white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--shadow-default);
+    width: 100%;
+    max-width: 1100px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.dadosPessoais,
+.containerEndereco {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+input,
+select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--gray-medium);
+    outline: none;
+    transition: 0.2s;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--primary-medium);
+}
+
+.dadosPessoais p {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn button {
+    padding: 12px 30px;
+    background-color: var(--success);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn button:hover {
+    background-color: var(--success-hover);
+}
