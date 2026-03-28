@@ -7,7 +7,12 @@ public class CadastroUsuarioModel {
     private String sobrenome;
     private String cpf;
     private long cep;
-    private String endereço;
+    private String matricula;
+    private String telefone;
+    private String sexo;
+    private String data;
+    private String email;
+    private String endereco;
     private String estado;
     private String bairro;
     private String cidade;
@@ -16,19 +21,43 @@ public class CadastroUsuarioModel {
     private String nomeUsuario;
     private String senha;
     private String funcao;
+    
+     public CadastroUsuarioModel() {
+    
+    }
+    
+    public String getData() {
+        return data;
+    }
 
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+   
     public String getNome() {
         return nome;
     }
 
+    
     public void setNome(String nome) {
         this.nome = nome;
     }
 
+    
     public String getSobrenome() {
         return sobrenome;
     }
 
+    
     public void setSobrenome(String sobrenome) {
         this.sobrenome = sobrenome;
     }
@@ -49,12 +78,12 @@ public class CadastroUsuarioModel {
         this.cep = cep;
     }
 
-    public String getEndereço() {
-        return endereço;
+    public String getEndereco() {
+        return endereco;
     }
 
-    public void setEndereço(String endereço) {
-        this.endereço = endereço;
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public String getEstado() {
@@ -120,7 +149,29 @@ public class CadastroUsuarioModel {
     public void setFuncao(String funcao) {
         this.funcao = funcao;
     }
-    
-    
-    
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+   
 }
