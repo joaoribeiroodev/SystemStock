@@ -9,11 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import model.CadastroUsuarioModel;
 
-@WebServlet("/cadastro")
+@WebServlet("/pages/cadastro")
 public class CadastroController extends HttpServlet{
     
-    protected void doPpst(HttpServletRequest request, HttpServletResponse response) 
-        throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+              throws ServletException, IOException {
+              
         CadastroUsuarioModel user = new CadastroUsuarioModel();
         
         user.setNome(request.getParameter("nameFirst"));
@@ -27,12 +28,12 @@ public class CadastroController extends HttpServlet{
         user.setNomeUsuario(request.getParameter("usuario"));
         user.setSenha(request.getParameter("senha"));
         user.setFuncao(request.getParameter("funcao"));
-        user.setCep(request.getParameter("cep"));
+        user.setCep(Long.parseLong((request.getParameter("cep"))));
         user.setEndereco(request.getParameter("endereco"));
         user.setCidade(request.getParameter("cidade"));
         user.setBairro(request.getParameter("bairro"));
         user.setEstado(request.getParameter("estado"));
-        user.setNumero(request.getParameter("numero"));
+        user.setNumero(Long.parseLong((request.getParameter("numero"))));
         user.setComplemento(request.getParameter("complemento"));
         
         CadastroUsersDAO dao = new CadastroUsersDAO();
@@ -40,9 +41,7 @@ public class CadastroController extends HttpServlet{
         if(dao.cadastrar(user)) {
             response.sendRedirect("pages/dashboard.html");
         }else{
-            response.sendRedirect("pages/cadastro.html");
+            response.sendRedirect("cadastro.html");
         }
-        
     }
-    
 }
