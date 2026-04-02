@@ -6,7 +6,7 @@ public class CadastroUsuarioModel {
     private String nome;
     private String sobrenome;
     private String cpf;
-    private long cep;
+    private String cep;
     private String matricula;
     private String telefone;
     private String sexo;
@@ -19,7 +19,7 @@ public class CadastroUsuarioModel {
     private long numero;
     private String complemento;
     private String nomeUsuario;
-    private String senha;
+    private String psw;
     private String funcao;
     
      public CadastroUsuarioModel() {
@@ -70,11 +70,11 @@ public class CadastroUsuarioModel {
         this.cpf = cpf;
     }
 
-    public long getCep() {
+    public String getCep() {
         return cep;
     }
 
-    public void setCep(long cep) {
+    public void setCep(String cep) {
         this.cep = cep;
     }
 
@@ -134,12 +134,12 @@ public class CadastroUsuarioModel {
         this.nomeUsuario = nomeUsuario;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPsw() {
+        return psw;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPsw(String psw) {
+        this.psw = psw;
     }
 
     public String getFuncao() {

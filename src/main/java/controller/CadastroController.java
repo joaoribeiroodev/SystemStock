@@ -26,9 +26,9 @@ public class CadastroController extends HttpServlet{
         user.setEmail(request.getParameter("email"));
         user.setTelefone(request.getParameter("telefone"));
         user.setNomeUsuario(request.getParameter("usuario"));
-        user.setSenha(request.getParameter("senha"));
+        user.setPsw(request.getParameter("psw"));
         user.setFuncao(request.getParameter("funcao"));
-        user.setCep(Long.parseLong((request.getParameter("cep"))));
+        user.setCep(request.getParameter("cep"));
         user.setEndereco(request.getParameter("endereco"));
         user.setCidade(request.getParameter("cidade"));
         user.setBairro(request.getParameter("bairro"));
@@ -39,7 +39,7 @@ public class CadastroController extends HttpServlet{
         CadastroUsersDAO dao = new CadastroUsersDAO();
         
         if(dao.cadastrar(user)) {
-            response.sendRedirect("pages/dashboard.html");
+            response.sendRedirect("dashboard.html");
         }else{
             response.sendRedirect("cadastro.html");
         }

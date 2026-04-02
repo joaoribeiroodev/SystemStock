@@ -9,8 +9,8 @@ CREATE TABLE users (
     psw VARCHAR(100) NOT NULL,
 
     -- dados pessoais
-    nome VARCHAR(100),
-    sobrenome VARCHAR(100),
+    nameFirst VARCHAR(100),
+    sobreNome VARCHAR(100),
     matricula VARCHAR(50) UNIQUE,
     cpf VARCHAR(14) UNIQUE,
     sexo ENUM('Masculino', 'Feminino'),
@@ -30,7 +30,7 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (
-    username, psw, nome, sobrenome, matricula, cpf, sexo, data_nascimento,
+    username, psw, nameFirst, sobreNome, matricula, cpf, sexo, data_nascimento,
     email, telefone, funcao,
     cep, endereco, bairro, cidade, estado, numero, complemento
 ) VALUES (

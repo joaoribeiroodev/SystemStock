@@ -1,113 +1,116 @@
+HTML - Dashboard
+
 <!DOCTYPE html>
 <html>
-    
-    <head>
-        <link rel="stylesheet" href="../css/reset.css"/>
-        <link rel="stylesheet" href="../css/color.css"/>
-        <link rel="stylesheet" href="../css/dashboard.css"/>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    
-    <body>
-        <header id="header">
-            <h1 id="tituloDashbord">SystemStock</h1>
-            <nav>
-                <ul>
-                    <li><a href="dashboard.html">Inicio</a></li>
-                    <li><a href="#">Gerenciamento</a></li>
-                    <li><a href="cadastro.html">Cadastro</a></li>
-                </ul>
-            </nav>
-        </header>
-        <main>
-            <section id="resumoEstoque">
-                <div class="card-resumo">
-                    <h2 class="titulo-card">Entrada</h2>
-                    <p class="valor-card">100</p>
-                </div>
-                <div class="card-resumo">
-                    <h2 class="titulo-card">Saída</h2>
-                    <p class="valor-card">80</p>
-                </div>
-                <div class="card-resumo">
-                    <h2 class="titulo-card">Total</h2>
-                    <p class="valor-card">20</p>
-                </div>
-            </section>
-            <section id="filtro">
-                <div class="grupo-filtro">
-                    <label for="filtroData">Data</label>
-                    <input type="date" id="filtroData" class="input-filtro">
-                </div>
-                <div class="grupo-filtro">
-                    <label for="tipoMovimentação">Tipo</label>
-                    <select id="tipoMovimentação" class="select-filtro">
-                        <option value="">Selecione uma opção</option>
-                        <option value="entrada">Entrada</option>
-                        <option value="saída">Saída</option>
-                    </select>
-                </div>
-                <div class="grupo-filtro pesquisa-nome">
-                    <label for="pesquisarNome">Pesquisar item</label>
-                    <input type="type" id="pesquisarNome" class="input-filtro" placeholder="Digite o nome do produto">
-                </div>
-                <div class="grupo-filtro botao-pesquisa">
-                    <button id="btnPesquisar" class="btn-pesquisa">Pesquisar</button>
-                </div>
-            </section>
-            <section id="tabelaEstoqueContainer">
-                <div class="tabela-wrapper">
-                    <table id="tabelaEstoque">
-                        <thead>
-                            <tr>
-                                <th>Código de barras</th>
-                                <th>Nome</th>
-                                <th>Fabricante</th>
-                                <th>Marca</th>
-                                <th>Quantidade</th>
-                                <th>Valor unitário</th>
-                                <th>Total</th>                            
-                            </tr>
-                        </thead>
-                        <tbody id="corpoTabela">
-                            <tr class="linha-item">
-                                <td>123456789</td>
-                                <td>Mouse</td>
-                                <td>Logitech</td>
-                                <td>MX</td>
-                                <td>10</td>
-                                <td>R$80,00</td>
-                                <td>R$800,00</td>
-                            </tr>
-                            <tr class="linha-item">
-                                <td>987456321</td>
-                                <td>Teclado</td>
-                                <td>Logitech</td>
-                                <td>MX</td>
-                                <td>20</td>
-                                <td>R$120,00</td>
-                                <td>R$2400,00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            <section id="paginacao">
-                <div class="controle-paginacao">
-                    <label for="pagina">Página</label>
-                    <select id="pagina">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                </div>
-                <div class="conteiner-btn">
-                    <button id="btnVoltar" class="btn-voltar">Voltar</button>
-                    <button id="btnProximo" class="btn-proximo">Próximo</button>
-                </div>
-            </section>
-        </main>
-    </body>
+<head>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/color.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header id="header">
+        <h1 id="tituloCadastro">Sistema de estoque</h1>
+        <nav id="menu">
+            <ul class="menu-lista">
+                <li><a href="dashboard.html">Início</a></li>
+                <li><a href="#">Gerenciamento</a></li>
+                <li><a href="cadastro.html" class="btn-menu">Cadastro</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="resumoEstoque">
+            <div class="card-resumo">
+                <h3 class="titulo-card">Entrada</h3>
+                <p class="valor-card">100</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3 class="titulo-card">Saída</h3>
+                <p class="valor-card">80</p>
+            </div>
+
+            <div class="card-resumo">
+                <h3 class="titulo-card">Total</h3>
+                <p class="valor-card">20</p>
+            </div>
+        </section>
+        <section id="filtro">
+            <div class="grupo-filtro">
+                <label for="filtroData">Data</label>
+                <input type="date" id="filtroData" class="input-filtro">
+            </div>
+            <div class="grupo-filtro">
+                <label for="tipoMovimentacao">Tipo</label>
+                <select id="tipoMovimentacao" class="select-filtro">
+                    <option value="">Selecione uma opção</option>
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                </select>
+            </div>
+            <div class="grupo-filtro pesquisa-nome">
+                <label for="pesquisarNome">Pesquisar item</label>
+                <input type="text" id="pesquisarNome" class="input-filtro" placeholder="Digite o nome do produto">
+            </div>
+            <div class="grupo-filtro botao-pesquisa">
+                <button id="btnPesquisar" class="btn-pesquisa">Pesquisar</button>
+            </div>
+        </section>
+        <section id="tabelaEstoqueContainer">
+            <div class="tabela-wrapper">
+                <table id="tabelaEstoque">
+                    <thead>
+                        <tr>
+                            <th>Código de barras</th>
+                            <th>Nome</th>
+                            <th>Fabricante</th>
+                            <th>Marca</th>
+                            <th>Quantidade</th>
+                            <th>Valor unitário</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabela">
+                        <tr class="linha-item">
+                            <td>123456789</td>
+                            <td>Mouse</td>
+                            <td>Logitech</td>
+                            <td>MX</td>
+                            <td>10</td>
+                            <td>R$80,00</td>
+                            <td>R$800,00</td>
+                        </tr>
+                        <tr class="linha-item">
+                            <td>123456780</td>
+                            <td>Teclado</td>
+                            <td>Logitech</td>
+                            <td>MXC</td>
+                            <td>10</td>
+                            <td>R$90,00</td>
+                            <td>R$900,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="paginacao">
+            <div class="controle-paginacao">
+                <label for="pagina">Página</label>
+                <select id="pagina">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="conteiner-btn">
+                <button id="btnVoltar" class="btn-voltar">Voltar</button>
+                <button id="btnProximo" class="btn-proximo">Próximo</button>
+            </div>
+        </section>
+    </main>
+</body>
 </html>
