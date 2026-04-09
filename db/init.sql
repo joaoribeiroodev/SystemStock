@@ -1,4 +1,3 @@
-CREATE DATABASE estoque_db;
 use estoque_db;
 
 CREATE TABLE users (

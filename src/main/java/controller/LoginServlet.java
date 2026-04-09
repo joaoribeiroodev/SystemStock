@@ -34,10 +34,10 @@ public class LoginServlet extends HttpServlet{
             session.setAttribute("usuario", usuario);
             
             System.out.println("Login OK");
-            response.sendRedirect("pages/dashboard.html");
+            response.sendRedirect(request.getContextPath() + "pages/dashboard.html");
         }else{
             System.out.println("Login inválido");
-            response.sendRedirect("index.html");
+            response.sendRedirect(request.getContextPath() + "index.html");
         }
         
     }    
