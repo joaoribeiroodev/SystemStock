@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../css/reset.css" />
+        <link rel="stylesheet" href="../css/color.css" />
+        <link rel="stylesheet" href="../css/cadastroProdutos.css"/>
+        <title>Cadastro Produto</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <header id="header">
+            <h1 id="tituloCadastro">SystemStock</h1>
+            <nav id="menu">
+                <ul class="menu-lista">
+                    <li><a href="dashboard.html">Início</a></li>
+                    <li><a href="#">Gerenciamento</a></li>
+                    <li><a href="cadastro.html" class="btn-menu">Cadastro</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section id ="form-container">
+                <form action="../cadastroProdutos" method="POST" id="formCadastro">
+                    <div class="linha-form">
+                        <label for="codigoBarras">Código de Barras</label>
+                        <input type="text" name="codigoBarras" required />
+                    </div>
+
+                    <div class="grupo-form">
+                        <label for="nomeProduto" >Nome do Produto</label>
+                        <input type="text" name="nomeProduto" required />
+                    </div>
+
+                    <div class="linha-form">
+                        <label for="fabricante" >Fabricante</label>
+                        <input type="text" name="fabricante" required />
+                    </div>
+
+                    <div class="grupo-form">
+                        <label for="nomeProduto" >Marca</label>
+                        <input type="text" name="marca" required />
+                    </div>
+                    <div class="linha-form">
+                        <div class="grupo-form">
+                            <label for="dataFabricacao" >Data de Fabricação</label>
+                            <input type="date" name="dataFabricacao" required />
+                        </div>
+
+                        <div class="grupo-form">
+                            <label for="dataVencimento" >Data de Vencimento</label>
+                            <input type="date" name="dataVencimento" required />
+                        </div>
+                    </div>
+                    <div class="linha-form">
+                        <div class="grupo-form">
+                            <label for="quantidade" >Quantidade</label>
+                            <input type="number" name="quantidade" id="quantidade" />
+                        </div>
+
+                        <div class="grupo-form">
+                            <label for="dataVencimento" >Valor Unitário</label>
+                            <input type="number" name="valor" id="valor" />
+                        </div>
+                    </div>
+                    <div class="linha-form">
+                        <div class="grupo-form full">
+                            <label>Total</label>
+                            <input type="number" name="total" id="total" />
+                        </div>
+                    </div>
+                    <div class="acoes-form">
+                        <button type="submit" class="btn-salvar">Salvar</button>
+                        <a href="dashboard.html" class="btn-cancelar">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+        <script src="../js/cadastroProdutos.js"></script>
+    </body>
+</html>
