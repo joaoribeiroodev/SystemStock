@@ -28,6 +28,19 @@ CREATE TABLE users (
     complemento VARCHAR(100)
 );
 
+CREATE TABLE produtos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigos_barras VARCHAR(100) NOT NULL,
+    nome_produto VARCHAR(255) NOT NULL,
+    fabricante VARCHAR(255),
+    marca VARCHAR(255),
+    data_fabricacao DATE,
+    data_vencimento DATA,
+    quantidade BIGINT,
+    valor DECIMAL(10,2),
+    total DECIMAL(10,2),
+);
+
 INSERT INTO users (
     username, psw, nameFirst, sobreNome, matricula, cpf, sexo, data_nascimento,
     email, telefone, funcao,
