@@ -28,17 +28,17 @@ CREATE TABLE users (
     complemento VARCHAR(100)
 );
 
-CREATE TABLE produtos (
+create table produtos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    codigos_barras VARCHAR(100) NOT NULL,
+    codigo_barras VARCHAR(100) NOT NULL,
     nome_produto VARCHAR(255) NOT NULL,
     fabricante VARCHAR(255),
     marca VARCHAR(255),
     data_fabricacao DATE,
-    data_vencimento DATA,
+    data_vencimento DATE,
     quantidade BIGINT,
     valor DECIMAL(10,2),
-    total DECIMAL(10,2),
+    total DECIMAL(10,2)
 );
 
 INSERT INTO users (
