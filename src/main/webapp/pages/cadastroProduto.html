@@ -25,8 +25,10 @@
         <section id="form-container">
             <form action="../cadastroProdutos" method="POST" id="formCadastro">
                 <div class="linha-form">
+                <div class="grupo-form">
                     <label for="codigoBarras">Código de Barras</label>
                     <input type="text" name="codigoBarras" required />
+                </div>
                 </div>
 
                 <div class="grupo-form">
@@ -35,8 +37,10 @@
                 </div>
 
                 <div class="linha-form">
-                    <label for="fabricante">Fabricante</label>
+                <div class="grupo-form">
+                    <label class="fabricante" for="fabricante">Fabricante</label>
                     <input type="text" name="fabricante" required />
+                </div>
                 </div>
 
                 <div class="grupo-form">
@@ -45,12 +49,12 @@
                 </div>
                 <div class="linha-form">
                     <div class="grupo-form">
-                        <label for="dataFabricacao">Data de Fabricação</label>
+                        <label class="dataFabricacao" for="dataFabricacao">Data de Fabricação</label>
                         <input type="date" name="dataFabricacao" required />
                     </div>
 
                     <div class="grupo-form">
-                        <label for="dataVencimento">Data de Vencimento</label>
+                        <label class="dataVencimento" for="dataVencimento">Data de Vencimento</label>
                         <input type="date" name="dataVencimento" required />
                     </div>
                 </div>

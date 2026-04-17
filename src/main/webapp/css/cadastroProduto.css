@@ -116,3 +116,7 @@ body {
 .btn-cancelar:hover {
     background-color: var(--gray-dark);
 }
+
+.dataFabricacao, .dataVencimento, .fabricante {
+    margin-top: 15px;
+}
