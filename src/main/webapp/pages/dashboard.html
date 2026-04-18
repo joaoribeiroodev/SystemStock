@@ -25,17 +25,17 @@
         <section id="resumoEstoque">
             <div class="card-resumo">
                 <h3 class="titulo-card">Entrada</h3>
-                <p class="valor-card">100</p>
+                <p id="cardEntrada" class="valor-card">0</p>
             </div>
 
             <div class="card-resumo">
                 <h3 class="titulo-card">Saída</h3>
-                <p class="valor-card">80</p>
+                <p id="cardSaida" class="valor-card">0</p>
             </div>
 
             <div class="card-resumo">
                 <h3 class="titulo-card">Total</h3>
-                <p class="valor-card">20</p>
+                <p id="cardTotal" class="valor-card">0</p>
             </div>
         </section>
         <section id="filtro">
@@ -74,8 +74,11 @@
                             <th>Quantidade</th>
                             <th>Valor unitário</th>
                             <th>Total</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
+                    <tbody id="corpoTabela">
+                    </tbody>
                 </table>
             </div>
         </section>

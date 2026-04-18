@@ -26,6 +26,7 @@ public class CadastroProdutosController extends HttpServlet {
         produto.setQuantidade(Long.parseLong(request.getParameter("quantidade")));
         produto.setValor(request.getParameter("valor"));
         produto.setTotal(request.getParameter("total"));
+        produto.setStatus(request.getParameter("status"));
         
         CadastroProdutoDAO dao = new CadastroProdutoDAO();
 
