@@ -21,7 +21,7 @@ public class CadastroProdutosController extends HttpServlet {
         produto.setNomeProduto(request.getParameter("nomeProduto"));
         produto.setFabricante(request.getParameter("fabricante"));
         produto.setMarca(request.getParameter("marca"));
-        produto.setDatafabricacao(request.getParameter("datafabricacao"));
+        produto.setDataFabricacao(request.getParameter("dataFabricacao"));
         produto.setDataVencimento(request.getParameter("dataVencimento"));
         produto.setQuantidade(Long.parseLong(request.getParameter("quantidade")));
         produto.setValor(request.getParameter("valor"));

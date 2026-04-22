@@ -7,7 +7,7 @@ public class CadastroProdutoModel {
     private String nomeProduto;
     private String fabricante;
     private String marca;
-    private String datafabricacao;
+    private String dataFabricacao;
     private String dataVencimento;
     private long quantidade;
     private String valor;
@@ -46,12 +46,12 @@ public class CadastroProdutoModel {
         this.marca = marca;
     }
 
-    public String getDatafabricacao() {
-        return datafabricacao;
+    public String getDataFabricacao() {
+        return dataFabricacao;
     }
 
-    public void setDatafabricacao(String datafabricacao) {
-        this.datafabricacao = datafabricacao;
+    public void setDataFabricacao(String dataFabricacao) {
+        this.dataFabricacao = dataFabricacao;
     }
 
     public String getDataVencimento() {
