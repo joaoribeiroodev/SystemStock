@@ -17,8 +17,7 @@ public class CadastroProdutoDAO {
                 + "(codigo_barras, nome_produto, fabricante, marca, data_fabricacao, data_vencimento, quantidade, valor, total, status) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, produto.getCodigoBarras());
             stmt.setString(2, produto.getNomeProduto());
@@ -30,29 +29,55 @@ public class CadastroProdutoDAO {
             stmt.setString(8, produto.getValor());
             stmt.setString(9, produto.getTotal());
             stmt.setString(10, produto.getStatus());
-            
+
             stmt.executeUpdate();
-            
+
             return true;
-            
-        } catch (SQLException e) {          
+
+        } catch (SQLException e) {
             e.printStackTrace();
-            return false;            
+            return false;
         }
     }
 
-    public List<CadastroProdutoModel> listar() {
+    public List<CadastroProdutoModel> listarComFiltro(String nome, String tipo, String data) {
         List<CadastroProdutoModel> lista = new ArrayList<>();
-        
-        String sql = "SELECT * FROM produtos";
-        
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM produtos WHERE 1=1");
+
+        if (nome != null && !nome.isEmpty()) {
+            sql.append("AND LOWER (nome_produto) LIKE ?");
+        }
+        if (tipo != null && !tipo.isEmpty()) {
+            sql.append("AND status = ?");
+        }
+        if (data != null && !data.isEmpty()) {
+            sql.append("AND data_fabricacao = ?");
+        }
+
+        try (Connection conn = ConnectionFactory.getConnection(); 
+                PreparedStatement stmt = conn.prepareStatement(sql.toString()))
+                {
+
+            int index = 1;
+
+            if (nome != null && !nome.isEmpty()) {
+                stmt.setString(index++, "%" + nome.toLowerCase());
+            }
             
-            while(rs.next()) {
+            if (tipo != null && !tipo.isEmpty()) {
+                stmt.setString(index++, tipo);
+            }
+            
+            if (data != null && !data.isEmpty()) {
+                stmt.setString(index++, data);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
                 CadastroProdutoModel p = new CadastroProdutoModel();
-                
+
                 p.setCodigoBarras(rs.getString("codigo_barras"));
                 p.setNomeProduto(rs.getString("nome_produto"));
                 p.setFabricante(rs.getString("fabricante"));
@@ -63,13 +88,13 @@ public class CadastroProdutoDAO {
                 p.setValor(rs.getString("valor"));
                 p.setTotal(rs.getString("total"));
                 p.setStatus(rs.getString("status"));
-                
+
                 lista.add(p);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return lista;
     }
 }

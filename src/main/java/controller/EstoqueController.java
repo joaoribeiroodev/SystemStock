@@ -16,8 +16,12 @@ public class EstoqueController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
+        String nome = request.getParameter("nome");
+        String tipo = request.getParameter("tipo");
+        String data = request.getParameter("data");
+
         CadastroProdutoDAO dao = new CadastroProdutoDAO();
-        List<CadastroProdutoModel> lista = dao.listar();
+        List<CadastroProdutoModel> lista = dao.listarComFiltro(nome, tipo, data);
         
         String json = new Gson().toJson(lista);
         
