@@ -24,14 +24,17 @@ public class LoginServlet extends HttpServlet{
         UserModel userModel = new UserModel();
         userModel.setUsername(usuario);
         userModel.setPassword(senha);
-        
+           
         UserDAO dao = new UserDAO();
         
-        if(dao.validarLogin(userModel)){
+        UserModel user = dao.validarLogin(userModel);
+        
+        if(user != null){
             HttpSession session =
                     request.getSession();
             
-            session.setAttribute("usuario", usuario);
+            session.setAttribute("usuario", user.getUsername());
+            session.setAttribute("perfil", user.getFuncao());
             
             System.out.println("Login OK");
             response.sendRedirect(request.getContextPath() + "/pages/dashboard.html");

@@ -50,6 +50,10 @@ body {
     background-color: var(--primary-dark);
 }
 
+#btnLogout {
+    background-color: red
+}
+
 #resumoEstoque {
     display: flex;
     justify-content: center; /* centraliza */
@@ -113,7 +117,7 @@ body {
 }
 
 .botao-pesquisa,
-.btn-pesquisa {
+.btn-pesquisar {
     padding: 10px 20px;
     background-color: var(--primary-medium);
     color: var(--white);
@@ -124,7 +128,7 @@ body {
 }
 
 .botao-pesquisa:hover,
-.btn-pesquisa:hover {
+.btn-pesquisar:hover {
     background-color: var(--primary-dark);
 }
 

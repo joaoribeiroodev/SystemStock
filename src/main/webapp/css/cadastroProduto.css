@@ -86,6 +86,17 @@ body {
     border-color: var(--primary-medium);
 }
 
+.grupo-form select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-medium);
+    outline: none;
+}
+
+.grupo-form select:focus {
+    border-color: var(--primary-medium);
+}
+
 .acoes-form {
     display: flex;
     justify-content: space-between;

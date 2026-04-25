@@ -18,6 +18,7 @@
                 <li><a href="dashboard.html">Início</a></li>
                 <li><a href="#">Gerenciamento</a></li>
                 <li><a href="cadastro.html" class="btn-menu">Cadastro</a></li>
+                <li><a href="#" id="btnLogout" class="btn-menu">Sair</a></li>
             </ul>
         </nav>
     </header>
@@ -56,7 +57,7 @@
                 <input type="text" id="pesquisarNome" class="input-filtro" placeholder="Digite o nome do produto">
             </div>
             <div class="grupo-filtro botao-pesquisa">
-                <button id="btnPesquisar" class="btn-pesquisar">Pesquisar</button>
+                <button type="button" id="btnPesquisar" class="btn-pesquisar">Pesquisar</button>
             </div>
             <div class="topo-tabela">
                 <a href="cadastroProduto.html" class="btn-add">+</a>
@@ -100,8 +101,12 @@
             </div>
         </section>
     </main>
-    <script src="../js/dashboard.js"></script>
+
     <script src="../js/filtro.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/validarLogin.js"></script>
+    <script src="../js/logout.js"></script>
+
 </body>
 
 </html>

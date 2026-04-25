@@ -42,13 +42,3 @@ create table produtos (
     status VARCHAR(255)
 );
 
-INSERT INTO users (
-    username, psw, nameFirst, sobreNome, matricula, cpf, sexo, data_nascimento,
-    email, telefone, funcao,
-    cep, endereco, bairro, cidade, estado, numero, complemento
-) VALUES (
-    'admin', '1234',
-    'Joao','Silva', '2023001', '123.456.789-00', 'Masculino', '2000-05-10',
-    'joao@email.com', '71999999999', 'Administrador',
-    '40000-000', 'Rua das Flores', 'Centro', 'Salvador', 'BA', '123', 'Apto 101'
-);
