@@ -46,13 +46,13 @@ public class CadastroProdutoDAO {
         StringBuilder sql = new StringBuilder("SELECT * FROM produtos WHERE 1=1");
 
         if (nome != null && !nome.isEmpty()) {
-            sql.append("AND LOWER (nome_produto) LIKE ?");
+            sql.append(" AND LOWER (nome_produto) LIKE ?");
         }
         if (tipo != null && !tipo.isEmpty()) {
-            sql.append("AND status = ?");
+            sql.append(" AND status = ?");
         }
         if (data != null && !data.isEmpty()) {
-            sql.append("AND data_fabricacao = ?");
+            sql.append(" AND data_fabricacao = ?");
         }
 
         try (Connection conn = ConnectionFactory.getConnection(); 
