@@ -1,143 +1,189 @@
+/* dashboard.css - Versão Premium/Portfólio */
+
 body {
-    background-color: var(--gray-light);
-    color: var(--gray-dark);
-    padding: 20px;
-    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    margin: 0;
+    min-height: 100vh;
 }
 
+/* --- 1. Header Premium (Consistente com as outras páginas) --- */
 #header {
-    text-align: center;
-    margin-bottom: 20px;
+    background: rgba(11, 15, 25, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 1.2rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 #tituloCadastro {
-    font-size: 24px;
-    color: var(--primary-dark);
-    margin-bottom: 10px;
-}
-
-#menu {
-    display: flex;
-    justify-content: center;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0;
 }
 
 .menu-lista {
     display: flex;
-    gap: 20px;
+    gap: 2rem;
     list-style: none;
+    margin: 0;
     padding: 0;
+    align-items: center;
 }
 
-.menu-lista li a {
+.menu-lista a {
+    color: var(--text-secondary);
     text-decoration: none;
-    color: var(--primary-medium);
-    font-weight: bold;
-    transition: 0.2s;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: var(--transition-smooth);
+    position: relative;
 }
 
-.menu-lista li a:hover {
-    color: var(--primary-dark);
+.menu-lista a:hover {
+    color: var(--text-primary);
 }
 
-.btn-menu {
-    background-color: var(--primary-medium);
-    color: var(--white) !important;
-    padding: 6px 15px;
-    border-radius: 20px;
-}
-
-.btn-menu:hover {
-    background-color: var(--primary-dark);
+/* Efeito de destaque no link ativo ou botões de menu */
+.menu-lista a.btn-menu {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
 }
 
 #btnLogout {
-    background-color: red
+    color: #ef4444; /* Vermelho para o Sair */
+    font-weight: 600;
 }
 
+#btnLogout:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* --- 2. Cards de Resumo --- */
 #resumoEstoque {
-    display: flex;
-    justify-content: center; /* centraliza */
-    gap: 20px;
-    margin: 30px 0;
-    flex-wrap: wrap; /* responsivo */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 3rem 5% 1rem 5%;
 }
 
 .card-resumo {
-    background-color: var(--white);
-    box-shadow: 0 4px 10px var(--shadow-default);
-    border-radius: 12px;
-    width: 220px;
-    padding: 20px;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+    transition: var(--transition-smooth);
 }
 
 .card-resumo:hover {
     transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(79, 172, 254, 0.3);
 }
 
 .titulo-card {
-    font-size: 18px;
-    color: var(--primary-medium);
-    margin-bottom: 10px;
-    font-weight: bold;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0;
 }
 
 .valor-card {
-    font-size: 22px;
-    font-weight: bold;
-    color: var(--primary-dark);
+    font-size: 3rem;
+    font-weight: 800;
+    margin-top: 0.5rem;
+    background: linear-gradient(to bottom, #fff, #888);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
+/* --- 3. Filtros e Pesquisa --- */
 #filtro {
+    margin: 2rem 5%;
+    background: var(--glass-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--glass-border);
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 20px;
-    justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    gap: 1.5rem;
 }
 
 .grupo-filtro {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
 }
 
-.input-filtro,
-.select-filtro {
-    padding: 8px 10px;
-    border-radius: 5px;
-    border: 1px solid var(--gray-medium);
-    outline: none;
+.pesquisa-nome { flex-grow: 1; }
+
+.grupo-filtro label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: 600;
 }
 
-.input-filtro:focus,
-.select-filtro:focus {
-    border-color: var(--primary-medium); 
+.input-filtro, .select-filtro {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    padding: 0.8rem;
+    border-radius: 10px;
+    color: white;
+    transition: var(--transition-smooth);
 }
 
-.botao-pesquisa,
 .btn-pesquisar {
-    padding: 10px 20px;
-    background-color: var(--primary-medium);
-    color: var(--white);
+    background: var(--gradient-primary);
     border: none;
-    border-radius: 100px;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: var(--transition-smooth);
 }
 
-.botao-pesquisa:hover,
-.btn-pesquisar:hover {
-    background-color: var(--primary-dark);
+.btn-add {
+    background: #10b981;
+    color: white;
+    text-decoration: none;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    border-radius: 50%;
+    font-size: 1.5rem;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    transition: var(--transition-smooth);
 }
 
+.btn-add:hover { transform: rotate(90deg) scale(1.1); }
+
+/* --- 4. Tabela Futurista --- */
 .tabela-wrapper {
-    width: 100%;
-    background-color: var(--white);
-    box-shadow: 0 4px 6px var(--shadow-default);
-    border-radius: 8px;
-    overflow: hidden;
+    margin: 0 5% 3rem 5%;
+    background: var(--glass-bg);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+    overflow-x: auto;
 }
 
 #tabelaEstoque {
@@ -145,53 +191,55 @@ body {
     border-collapse: collapse;
 }
 
-#tabelaEstoque th,
-#tabelaEstoque td {
-    padding: 12px;
-    text-align: center;
-}
-
 #tabelaEstoque th {
-    background-color: var(--primary-medium);
-    color: var(--white);
-    font-weight: bold;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.2rem;
+    text-align: left;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--glass-border);
 }
 
-#tabelaEstoque tr:nth-child(even) {
-    background-color: var(--gray-light);
+#tabelaEstoque td {
+    padding: 1.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    font-size: 0.9rem;
 }
 
+#tabelaEstoque tbody tr:hover {
+    background: rgba(79, 172, 254, 0.04);
+}
+
+/* --- 5. Paginação --- */
 #paginacao {
-    margin-top: 20px;
+    margin: 2rem 5%;
+    background: var(--glass-bg);
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius-md);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
-}
-
-.controle-paginacao label {
-    font-size: 15px;
-    color: var(--primary-dark);
+    border: 1px solid var(--glass-border);
 }
 
 #pagina {
-    border: 1px solid var(--primary-medium);
-    border-radius: 5px;
-    padding: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
-#btnVoltar,
-#btnProximo {
-    padding: 8px 15px;
-    background-color: var(--primary-medium);
-    color: var(--white);
-    border: none;
-    border-radius: 10px;
+.btn-voltar, .btn-proximo {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: var(--transition-smooth);
 }
 
-#btnVoltar:hover,
-#btnProximo:hover {
-    background-color: var(--primary-dark);
+.btn-voltar:hover, .btn-proximo:hover {
+    background: var(--gradient-primary);
+    color: black;
 }

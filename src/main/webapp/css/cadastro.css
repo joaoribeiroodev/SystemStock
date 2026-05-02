@@ -1,133 +1,200 @@
-:root {
-    /* Cores principais */
-    --primary-dark: #0f4c75;
-    --primary-medium: #3282b8;
-    --primary-light: #bbe1fa;
-
-    /* Cor de ação (botões / confirmação) */
-    --success: #1b9c85;
-    --success-hover: #157a6e;
-
-    /* Neutros */
-    --white: #ffffff;
-    --gray-light: #f5f5f5;
-    --gray-medium: #cccccc;
-    --gray-dark: #333333;
-
-    /* Sombra */
-    --shadow-default: rgba(0, 0, 0, 0.2);
-    
-}
+/* cadastro.css - Versão Clean Premium */
 
 body {
-    background-color: var(--gray-light);
-    color: var(--gray-dark);
-    padding: 20px;
-    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
 }
 
+/* 1. Fundo Dinâmico (Removido o brilho do topo/SystemStock) */
+body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+    width: 300px;
+    height: 300px;
+    background: rgba(0, 242, 254, 0.1);
+    bottom: -50px;
+    right: -50px;
+    animation: float 10s infinite alternate ease-in-out;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        transform: translateY(30px) scale(1.1);
+    }
+}
+
+/* 2. Header Minimalista (Borda mais discreta) */
 #header {
-    text-align: center;
-    margin-bottom: 20px;
+    background: rgba(11, 15, 25, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 1.5rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Borda quase invisível */
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 #tituloCadastro {
-    font-size: 24px;
-    color: var(--primary-dark);
-    margin-bottom: 10px;
-}
-
-#menu {
-    display: flex;
-    justify-content: center;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0;
 }
 
 .menu-lista {
     display: flex;
-    gap: 20px;
+    gap: 2.5rem;
     list-style: none;
+    margin: 0;
     padding: 0;
 }
 
-.menu-lista li a {
+.menu-lista a {
+    color: var(--text-secondary);
     text-decoration: none;
-    color: var(--primary-medium);
-    font-weight: bold;
-    transition: 0.2s;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: var(--transition-smooth);
 }
 
-.menu-lista li a:hover {
-    color: var(--primary-dark);
+.menu-lista a:hover {
+    color: var(--text-primary);
 }
 
+/* 3. Container Glassmorphism */
 #main {
+    padding: 4rem 5%;
     display: flex;
     justify-content: center;
 }
 
-.container{
-    background-color: var(--white);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px var(--shadow-default);
+.container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--glass-shadow);
+    border: 1px solid var(--glass-border);
     width: 100%;
-    max-width: 1100px;
-    display: flex;
-    gap: 30px;
-    flex-wrap: wrap;
+    max-width: 900px;
 }
 
+/* 4. Grids Fixos em 2 Colunas */
 .dadosPessoais,
 .containerEndereco {
-    flex: 1;
-    min-width: 300px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.containerEndereco {
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+/* 5. Inputs */
+.input-camp {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.6rem;
 }
 
-label {
-    font-size: 14px;
-    margin-top: 5px;
+.input-camp label,
+.input-camp p {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin: 0;
 }
 
-input,
-select {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid var(--gray-medium);
-    outline: none;
-    transition: 0.2s;
-}
-
-input:focus,
-select:focus {
-    border-color: var(--primary-medium);
-}
-
-.dadosPessoais p {
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-.btn {
+.input-camp input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem 1.2rem;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
     width: 100%;
+    width: 300px;
+    height: 40px;
+    color: white;
+    box-sizing: border-box;
+    transition: var(--transition-smooth);
+}
+
+.input-camp select {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.5rem;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    width: 100%;
+    width: 300px;
+    height: auto;
+    box-sizing: border-box;
+    transition: var(--transition-smooth);
+}
+
+.input-camp input:focus {
+    outline: none;
+    border-color: rgba(79, 172, 254, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* 6. Botão */
+.btn {
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    justify-content: flex-end;
+    margin-top: 3.5rem;
 }
 
-.btn button {
-    padding: 12px 30px;
-    background-color: var(--success);
-    color: var(--white);
+.btn button[type="submit"] {
+    background: var(--gradient-primary);
+    color: #000;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: 0.2s;
+    transition: var(--transition-smooth);
 }
 
-.btn button:hover {
-    background-color: var(--success-hover);
+.btn button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -10px rgba(79, 172, 254, 0.8);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+
+    .dadosPessoais,
+    .containerEndereco {
+        grid-template-columns: 1fr;
+    }
 }

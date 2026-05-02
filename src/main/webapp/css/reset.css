@@ -1,6 +1,79 @@
-* {
+/* reset.css - Modern CSS Reset */
+
+/* 1. Usar um modelo de caixa mais intuitivo e remover as margens e paddings padrão de tudo */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* 2. Remover o comportamento padrão das margens */
+html {
+  line-height: 1.15; /* Corrige a altura da linha em todos os navegadores */
+  -webkit-text-size-adjust: 100%; /* Previne o ajuste automático do tamanho da fonte em iOS */
+  scroll-behavior: smooth; /* Torna a rolagem da página mais suave */
+}
+
+/* 3. Definir o corpo da página */
+body {
+  min-height: 100vh;
+  text-rendering: optimizeSpeed; /* Melhora a velocidade de renderização do texto */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased; /* Torna as fontes mais nítidas (ótimo para designs escuros) */
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 4. Elementos multimédia responsivos por padrão */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 5. Remover estilos padrão de listas */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 6. Herdabilidade de tipografia em formulários */
+input,
+button,
+textarea,
+select {
+  font: inherit; /* Faz com que herdem a fonte definida no body */
+  background: none;
+  border: none;
+}
+
+/* 7. Remover o contorno padrão em links e herdar a cor */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 8. Evitar overflow em textos longos sem espaços */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* 9. Remover as setinhas de controlo em inputs do tipo number (estético) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield; /* Para Firefox */
 }

@@ -1,19 +1,24 @@
+/* color.css - Versão Premium/Portfólio */
 :root {
-    /* Cores principais */
-    --primary-dark: #0f4c75;
-    --primary-medium: #3282b8;
-    --primary-light: #bbe1fa;
+  /* Fundo Escuro com um tom mais noturno e "premium" */
+  --bg-main: #0b0f19; 
+  
+  /* Gradientes de Ação (O Segredo do Portfólio) */
+  --gradient-primary: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  --gradient-hover: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  
+  /* Vidro (Glassmorphism) */
+  --glass-bg: rgba(20, 27, 45, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
-    /* Cor de ação (botões / confirmação) */
-    --success: #1b9c85;
-    --success-hover: #157a6e;
+  /* Texto */
+  --text-primary: #ffffff;
+  --text-secondary: #8b9bb4;
+  --text-muted: #4f5b70;
 
-    /* Neutros */
-    --white: #ffffff;
-    --gray-light: #f5f5f5;
-    --gray-medium: #cccccc;
-    --gray-dark: #333333;
-
-    /* Sombra */
-    --shadow-default: rgba(0, 0, 0, 0.2);
+  /* Formatos */
+  --border-radius-lg: 24px;
+  --border-radius-md: 12px;
+  --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
