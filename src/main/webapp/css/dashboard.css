@@ -8,7 +8,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- 1. Header Premium (Consistente com as outras páginas) --- */
+/* --- 1. Header Premium --- */
 #header {
     background: rgba(11, 15, 25, 0.8);
     backdrop-filter: blur(15px);
@@ -55,7 +55,6 @@ body {
     color: var(--text-primary);
 }
 
-/* Efeito de destaque no link ativo ou botões de menu */
 .menu-lista a.btn-menu {
     background: rgba(255, 255, 255, 0.05);
     padding: 0.5rem 1rem;
@@ -64,7 +63,7 @@ body {
 }
 
 #btnLogout {
-    color: #ef4444; /* Vermelho para o Sair */
+    color: #ef4444;
     font-weight: 600;
 }
 
@@ -73,12 +72,24 @@ body {
     border-color: rgba(239, 68, 68, 0.2);
 }
 
-/* --- 2. Cards de Resumo --- */
+/* --- 2. Container Principal (Ajustado) --- */
+main {
+    display: flex;
+    gap: 2rem; /* Distância entre a coluna esquerda e a direita */
+    padding: 2rem 5%; /* Alinhamento perfeito com os 5% do Header */
+    align-items: flex-start;
+}
+
+/* --- 3. Coluna Esquerda (Cards) --- */
+.geral-estoque {
+    width: 15%; /* Define a largura da barra lateral */
+    flex-shrink: 0; /* Impede que ela esprema quando a tela diminuir */
+}
+
 #resumoEstoque {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 3rem 5% 1rem 5%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espaçamento entre os cards */
 }
 
 .card-resumo {
@@ -113,9 +124,18 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-/* --- 3. Filtros e Pesquisa --- */
+/* --- 4. Coluna Direita (Filtro, Tabela, Paginação) --- */
+.geral-produto {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Espaçamento vertical automático entre os elementos */
+    flex-grow: 1; /* Faz essa coluna ocupar todo o espaço restante */
+    min-width: 0; /* Previne que a tabela vaze da tela */
+}
+
+/* --- 5. Filtros e Pesquisa --- */
 #filtro {
-    margin: 2rem 5%;
+    margin: 0; /* Zerado, o gap do .geral-produto gerencia o espaço */
     background: var(--glass-bg);
     padding: 2rem;
     border-radius: var(--border-radius-md);
@@ -132,7 +152,9 @@ body {
     gap: 0.5rem;
 }
 
-.pesquisa-nome { flex-grow: 1; }
+.pesquisa-nome {
+    flex-grow: 1;
+}
 
 .grupo-filtro label {
     font-size: 0.7rem;
@@ -141,8 +163,9 @@ body {
     font-weight: 600;
 }
 
-.input-filtro, .select-filtro {
-    background: rgba(0, 0, 0, 0.3);
+.input-filtro,
+.select-filtro {
+    background: #0b0f19;
     border: 1px solid var(--glass-border);
     padding: 0.8rem;
     border-radius: 10px;
@@ -167,19 +190,21 @@ body {
     width: 45px;
     height: 45px;
     display: flex;
-    justify-content: center; 
-    align-items: center;    
+    justify-content: center;
+    align-items: center;
     border-radius: 50%;
     font-size: 1.5rem;
     box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
     transition: var(--transition-smooth);
 }
 
-.btn-add:hover { transform: rotate(90deg) scale(1.1); }
+.btn-add:hover {
+    transform: rotate(90deg) scale(1.1);
+}
 
-/* --- 4. Tabela Futurista --- */
+/* --- 6. Tabela Futurista --- */
 .tabela-wrapper {
-    margin: 0 5% 3rem 5%;
+    margin: 0; /* Zerado, o gap do .geral-produto gerencia o espaço */
     background: var(--glass-bg);
     border-radius: var(--border-radius-lg);
     border: 1px solid var(--glass-border);
@@ -212,13 +237,13 @@ body {
     background: rgba(79, 172, 254, 0.04);
 }
 
-/* --- 5. Paginação --- */
+/* --- 7. Paginação --- */
 #paginacao {
-    margin: 2rem 5%;
+    margin: 0; /* Zerado, o gap do .geral-produto gerencia o espaço */
     background: var(--glass-bg);
     padding: 1rem 2rem;
     border-radius: var(--border-radius-md);
-    display: flex;
+    display: flex;  
     justify-content: space-between;
     align-items: center;
     border: 1px solid var(--glass-border);
@@ -226,10 +251,11 @@ body {
 
 #pagina {
     color: white;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: #0b0f19;
 }
 
-.btn-voltar, .btn-proximo {
+.btn-voltar,
+.btn-proximo {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
     color: white;
@@ -239,7 +265,8 @@ body {
     transition: var(--transition-smooth);
 }
 
-.btn-voltar:hover, .btn-proximo:hover {
+.btn-voltar:hover,
+.btn-proximo:hover {
     background: var(--gradient-primary);
     color: black;
 }

@@ -23,83 +23,87 @@
         </nav>
     </header>
     <main>
-        <section id="resumoEstoque">
-            <div class="card-resumo">
-                <h3 class="titulo-card">Entrada</h3>
-                <p id="cardEntrada" class="valor-card">0</p>
-            </div>
+        <div class="geral-estoque">
+            <section id="resumoEstoque">
+                <div class="card-resumo">
+                    <h3 class="titulo-card">Entrada</h3>
+                    <p id="cardEntrada" class="valor-card">0</p>
+                </div>
 
-            <div class="card-resumo">
-                <h3 class="titulo-card">Saída</h3>
-                <p id="cardSaida" class="valor-card">0</p>
-            </div>
+                <div class="card-resumo">
+                    <h3 class="titulo-card">Saída</h3>
+                    <p id="cardSaida" class="valor-card">0</p>
+                </div>
 
-            <div class="card-resumo">
-                <h3 class="titulo-card">Total</h3>
-                <p id="cardTotal" class="valor-card">0</p>
-            </div>
-        </section>
-        <section id="filtro">
-            <div class="grupo-filtro">
-                <label for="filtroData">Data</label>
-                <input type="date" id="filtroData" class="input-filtro">
-            </div>
-            <div class="grupo-filtro">
-                <label for="tipoMovimentacao">Tipo</label>
-                <select id="tipoMovimentacao" class="select-filtro">
-                    <option value="">Selecione uma opção</option>
-                    <option value="entrada">Entrada</option>
-                    <option value="saida">Saída</option>
-                </select>
-            </div>
-            <div class="grupo-filtro pesquisa-nome">
-                <label for="pesquisarNome">Pesquisar item</label>
-                <input type="text" id="pesquisarNome" class="input-filtro" placeholder="Digite o nome do produto">
-            </div>
-            <div class="grupo-filtro botao-pesquisa">
-                <button type="button" id="btnPesquisar" class="btn-pesquisar">Pesquisar</button>
-            </div>
-            <div class="topo-tabela">
-                <a href="cadastroProduto.html" class="btn-add">+</a>
-            </div>
-        </section>
-        <section id="tabelaEstoqueContainer">
-            <div class="tabela-wrapper">
-                <table id="tabelaEstoque">
-                    <thead>
-                        <tr>
-                            <th>Código de barras</th>
-                            <th>Nome</th>
-                            <th>Fabricante</th>
-                            <th>Marca</th>
-                            <th>Data Fabricação</th>
-                            <th>Data Vencimento</th>
-                            <th>Quantidade</th>
-                            <th>Valor unitário</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoTabela">
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <section id="paginacao">
-            <div class="controle-paginacao">
-                <label for="pagina">Página</label>
-                <select id="pagina">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                </select>
-            </div>
-            <div class="conteiner-btn">
-                <button id="btnVoltar" class="btn-voltar">Voltar</button>
-                <button id="btnProximo" class="btn-proximo">Próximo</button>
-            </div>
-        </section>
+                <div class="card-resumo">
+                    <h3 class="titulo-card">Total</h3>
+                    <p id="cardTotal" class="valor-card">0</p>
+                </div>
+            </section>
+        </div>
+        <div class="geral-produto">
+            <section id="filtro">
+                <div class="grupo-filtro">
+                    <label for="filtroData">Data</label>
+                    <input type="date" id="filtroData" class="input-filtro">
+                </div>
+                <div class="grupo-filtro">
+                    <label for="tipoMovimentacao">Tipo</label>
+                    <select id="tipoMovimentacao" class="select-filtro">
+                        <option value="">Selecione uma opção</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+                </div>
+                <div class="grupo-filtro pesquisa-nome">
+                    <label for="pesquisarNome">Pesquisar item</label>
+                    <input type="text" id="pesquisarNome" class="input-filtro" placeholder="Digite o nome do produto">
+                </div>
+                <div class="grupo-filtro botao-pesquisa">
+                    <button type="button" id="btnPesquisar" class="btn-pesquisar">Pesquisar</button>
+                </div>
+                <div class="topo-tabela">
+                    <a href="cadastroProduto.html" class="btn-add">+</a>
+                </div>
+            </section>
+            <section id="tabelaEstoqueContainer">
+                <div class="tabela-wrapper">
+                    <table id="tabelaEstoque">
+                        <thead>
+                            <tr>
+                                <th>Código de barras</th>
+                                <th>Nome</th>
+                                <th>Fabricante</th>
+                                <th>Marca</th>
+                                <th>Data Fabricação</th>
+                                <th>Data Vencimento</th>
+                                <th>Quantidade</th>
+                                <th>Valor unitário</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabela">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section id="paginacao">
+                <div class="controle-paginacao">
+                    <label for="pagina">Página</label>
+                    <select id="pagina">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <div class="conteiner-btn">
+                    <button id="btnVoltar" class="btn-voltar">Voltar</button>
+                    <button id="btnProximo" class="btn-proximo">Próximo</button>
+                </div>
+            </section>
+        </div>
     </main>
 
     <script src="../js/filtro.js"></script>

@@ -1,4 +1,4 @@
-/* cadastro.css - Versão Clean Premium */
+/* cadastro.css - Versão Clean Premium (Sem Brilho) */
 
 body {
     background-color: var(--bg-main);
@@ -8,31 +8,6 @@ body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
-}
-
-/* 1. Fundo Dinâmico (Removido o brilho do topo/SystemStock) */
-body::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    z-index: -1;
-    width: 300px;
-    height: 300px;
-    background: rgba(0, 242, 254, 0.1);
-    bottom: -50px;
-    right: -50px;
-    animation: float 10s infinite alternate ease-in-out;
-}
-
-@keyframes float {
-    0% {
-        transform: translateY(0) scale(1);
-    }
-
-    100% {
-        transform: translateY(30px) scale(1.1);
-    }
 }
 
 /* 2. Header Minimalista (Borda mais discreta) */
@@ -146,7 +121,7 @@ body::after {
 }
 
 .input-camp select {
-    background: rgba(0, 0, 0, 0.3);
+    background: #0b0f19;
     color: var(--text-primary);
     border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 0.5rem;
@@ -192,7 +167,6 @@ body::after {
 
 /* Responsividade */
 @media (max-width: 768px) {
-
     .dadosPessoais,
     .containerEndereco {
         grid-template-columns: 1fr;
