@@ -42,3 +42,12 @@ create table produtos (
     status VARCHAR(255)
 );
 
+CREATE TABLE movimentacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    produto_id INT,
+    tipo ENUM('ENTRADA', 'SAIDA'),
+    quantidade BIGINT,
+    data_movimentacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+

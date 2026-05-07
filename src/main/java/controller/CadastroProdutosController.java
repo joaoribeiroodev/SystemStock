@@ -1,6 +1,7 @@
 package controller;
 
 import dao.CadastroProdutoDAO;
+import dao.MovimentacaoDAO; // Você deve criar esta classe conforme o plano anterior
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +18,7 @@ public class CadastroProdutosController extends HttpServlet {
 
         CadastroProdutoModel produto = new CadastroProdutoModel();
 
+        // Dados vindos do seu formulário HTML
         produto.setCodigoBarras(request.getParameter("codigoBarras"));
         produto.setNomeProduto(request.getParameter("nomeProduto"));
         produto.setFabricante(request.getParameter("fabricante"));
@@ -30,11 +32,26 @@ public class CadastroProdutosController extends HttpServlet {
         
         CadastroProdutoDAO dao = new CadastroProdutoDAO();
 
+        // 1. Salva o produto na tabela 'produtos'
         if(dao.salvar(produto)) {
+            
+            // 2. Tenta registrar a movimentação para o gráfico
+            try {
+                int idGerado = dao.buscarIdPorCodigo(produto.getCodigoBarras());
+                
+                if (idGerado > 0) {
+                    MovimentacaoDAO movDAO = new MovimentacaoDAO();
+                    // Registra se foi ENTRADA ou SAIDA com a quantidade informada
+                    movDAO.registrar(idGerado, produto.getStatus(), produto.getQuantidade());
+                }
+            } catch (Exception e) {
+                // Se falhar o log, o sistema continua funcionando para o usuário
+                System.err.println("Erro ao registrar movimentação: " + e.getMessage());
+            }
+
             response.sendRedirect("pages/dashboard.html");
-        }else{
+        } else {
             response.sendRedirect("pages/cadastroProduto.html");
         }
     }
-
 }

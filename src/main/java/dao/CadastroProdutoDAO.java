@@ -97,4 +97,21 @@ public class CadastroProdutoDAO {
 
         return lista;
     }
+
+    public int buscarIdPorCodigo(String codigoBarras) {
+    // Ajustado para 'codigo_barras' conforme seu SQL
+    String sql = "SELECT id FROM produtos WHERE codigo_barras = ?"; 
+    try (Connection conn = Conexao.conectar();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, codigoBarras);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("id");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return 0;
+}
+
 }
