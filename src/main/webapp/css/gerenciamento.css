@@ -1,0 +1,76 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6f8;
+    color: #333;
+}
+
+/* ── Header ── */
+#header {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#tituloCadastro {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+.menu-lista {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.menu-lista a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+
+.menu-lista a:hover {
+    color: #fff;
+}
+
+/* ── Main ── */
+main {
+    max-width: 860px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.card-grafico {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem 2rem 2rem;
+}
+
+.card-grafico h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: #1a1a2e;
+}
+
+/* ── Seletor de ano (estilo base, o JS complementa) ── */
+#seletorAno {
+    cursor: pointer;
+}
+
+/* ── Canvas ── */
+#graficoGerenciamento {
+    width: 100% !important;
+}

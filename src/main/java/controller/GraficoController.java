@@ -7,29 +7,66 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-// Esta é a rota que o teu JS vai chamar no fetch
+import java.io.IOException;
+import java.time.Year;
+
 @WebServlet("/api/dadosGrafico")
 public class GraficoController extends HttpServlet {
-    
+
+    private static final Gson GSON = new Gson();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
-        // 1. Instanciar o DAO para buscar os dados do banco
-        MovimentacaoDAO dao = new MovimentacaoDAO();
-        
-        // 2. Obter o modelo preenchido com as listas de entradas e saídas
-        GraficoModel dados = dao.buscarDadosGrafico();
 
-        // 3. Converter o objeto Java para uma String JSON usando Gson
-        String json = new Gson().toJson(dados);
-
-        // 4. Configurar a resposta para ser entendida como JSON pelo navegador
+        // ── Configurar cabeçalhos da resposta ─────────────────────────────────
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
-        // 5. Enviar os dados de volta
-        response.getWriter().write(json);
+
+        // ── Ler parâmetro ?ano=2025 (opcional) ────────────────────────────────
+        int ano = parseAno(request.getParameter("ano"));
+
+        // ── Buscar dados e tratar erros de forma centralizada ─────────────────
+        try {
+            MovimentacaoDAO dao = new MovimentacaoDAO();
+            GraficoModel dados = dao.buscarDadosGrafico(ano);
+
+            if (dados.getErro() != null) {
+                // Retorna HTTP 500 com mensagem legível ao JS
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+
+            response.getWriter().write(GSON.toJson(dados));
+
+        } catch (Exception e) {
+            System.err.println("[GraficoController] Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            // Retorna um JSON de erro estruturado para o frontend
+            GraficoModel erro = new GraficoModel();
+            erro.setErro("Erro interno do servidor. Tente novamente mais tarde.");
+            erro.garantirDozeMeses();
+
+            response.getWriter().write(GSON.toJson(erro));
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // HELPER: Parsear o ano com fallback seguro para o ano atual
+    // ─────────────────────────────────────────────────────────────────────────
+    private int parseAno(String anoParam) {
+        int anoAtual = Year.now().getValue();
+        if (anoParam == null || anoParam.isBlank()) {
+            return anoAtual;
+        }
+        try {
+            int ano = Integer.parseInt(anoParam.trim());
+            // Bloqueia anos fora de um intervalo razoável
+            return (ano >= 2000 && ano <= anoAtual) ? ano : anoAtual;
+        } catch (NumberFormatException e) {
+            return anoAtual;
+        }
     }
 }

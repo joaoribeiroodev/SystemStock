@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/gerenciamento.css">
     <title>Gerenciamento</title>
 </head>
 
@@ -12,18 +13,23 @@
         <h1 id="tituloCadastro">SystemStock</h1>
         <nav id="menu">
             <ul class="menu-lista">
-                <li><a href="dashboard.html">Inicio</a></li>
+                <li><a href="dashboard.html">Início</a></li>
                 <li><a href="#">Gerenciamento</a></li>
             </ul>
         </nav>
     </header>
+
     <main>
-        <div style="width: 100%; max-width: 800px; margin: auto;">
+        <div class="card-grafico">
+            <h2>📦 Movimentações de Estoque</h2>
+            <!-- O seletor de ano e os estados de carregamento/erro são injetados pelo grafico.js -->
             <canvas id="graficoGerenciamento"></canvas>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="../js/grafico.js"></script>
     </main>
+
+    <!-- Chart.js carregado antes do script para garantir disponibilidade -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/grafico.js"></script>
 </body>
 
-</html>
+</html
