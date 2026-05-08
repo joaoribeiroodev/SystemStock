@@ -19,11 +19,41 @@
         </nav>
     </header>
 
+    <section class="nav-lateral">
+        <h1>Navegação</h1>
+        <nav class="navegacao-lteral">
+            <a href="">Gráfico</a>
+            <a href="">Produtos</a>
+
+        </nav>
+    </section>
+
     <main>
-        <div class="card-grafico">
-            <h2>📦 Movimentações de Estoque</h2>
-            <canvas id="graficoGerenciamento"></canvas>
-        </div>
+        <section id="grafico">
+            <div class="card-grafico">
+                <h2>Movimentações de Estoque</h2>
+                <canvas id="graficoGerenciamento"></canvas>
+            </div>
+        </section>
+
+        <section id="ProdutosGerenciamento">
+            <div class="tabela-wrapper">
+                <table id="tabelaProdGerenciamento">
+                    <thead>
+                        <tr>
+                            <th>Código de barras</th>
+                            <th>Nome</th>
+                            <th>Quantidade</th>
+                            <th>Valor unitário</th>
+                            <th>Total</th>
+                            <th>Status</th> 
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaGerenciamentoProdutos">
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
