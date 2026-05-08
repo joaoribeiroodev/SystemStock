@@ -4,16 +4,15 @@ USE estoque_db;
 CREATE TABLE users (
     id               INT           AUTO_INCREMENT PRIMARY KEY,
 
-
     username         VARCHAR(100)  NOT NULL UNIQUE,
-    psw       VARCHAR(255)  NOT NULL,
+    psw              VARCHAR(255)  NOT NULL,
 
-    nome             VARCHAR(100),
+    nameFirst             VARCHAR(100),
     sobreNome        VARCHAR(100),
     matricula        VARCHAR(50)   UNIQUE,
     cpf              VARCHAR(14)   UNIQUE,
-    sexo             ENUM('Masculino', 'Feminino', 'Outro', 'Prefiro não informar'),
-    data_nascimento  DATE,
+    sexo            ENUM('Masculino', 'Feminino'),
+    dtaNascimento    DATE,
     email            VARCHAR(150)  UNIQUE,
     telefone         VARCHAR(20),
     funcao           VARCHAR(100),

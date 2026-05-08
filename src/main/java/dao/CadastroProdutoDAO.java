@@ -10,16 +10,14 @@ import java.util.List;
 
 public class CadastroProdutoDAO {
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // SALVAR
-    // ─────────────────────────────────────────────────────────────────────────
+
 
     public boolean salvar(CadastroProdutoModel produto) {
         String sql =
-            "INSERT INTO produtos " +
-            "(codigo_barras, nome_produto, fabricante, marca, " +
-            " data_fabricacao, data_vencimento, quantidade, valor, total, status) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "INSERT INTO produtos " +
+                        "(codigo_barras, nome_produto, fabricante, marca, " +
+                        " data_fabricacao, data_vencimento, quantidade, valor, total, status) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -31,13 +29,8 @@ public class CadastroProdutoDAO {
             stmt.setDate(5, Date.valueOf(produto.getDataFabricacao()));
             stmt.setDate(6, Date.valueOf(produto.getDataVencimento()));
             stmt.setLong(7, produto.getQuantidade());
-
-            // ❌ PROBLEMA ORIGINAL: setString() para colunas DECIMAL — tipo errado.
-            // ✅ CORREÇÃO: setBigDecimal() garante compatibilidade com DECIMAL(10,2).
             stmt.setBigDecimal(8, new BigDecimal(produto.getValor()));
             stmt.setBigDecimal(9, new BigDecimal(produto.getTotal()));
-
-            // ✅ status agora é ENUM no banco — o valor já é validado pelo Java antes de chegar aqui
             stmt.setString(10, produto.getStatus().toUpperCase());
 
             stmt.executeUpdate();
@@ -50,9 +43,7 @@ public class CadastroProdutoDAO {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // LISTAR COM FILTRO
-    // ─────────────────────────────────────────────────────────────────────────
+
 
     public List<CadastroProdutoModel> listarComFiltro(String nome, String tipo, String data) {
         List<CadastroProdutoModel> lista = new ArrayList<>();
@@ -82,7 +73,6 @@ public class CadastroProdutoDAO {
                     p.setDataVencimento(rs.getDate("data_vencimento").toLocalDate().toString());
                     p.setQuantidade(rs.getLong("quantidade"));
 
-                    // ✅ BigDecimal → String para manter compatibilidade com o Model atual
                     p.setValor(rs.getBigDecimal("valor").toPlainString());
                     p.setTotal(rs.getBigDecimal("total").toPlainString());
 
@@ -99,9 +89,7 @@ public class CadastroProdutoDAO {
         return lista;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // BUSCAR ID POR CÓDIGO DE BARRAS
-    // ─────────────────────────────────────────────────────────────────────────
+
 
     public int buscarIdPorCodigo(String codigoBarras) {
         String sql = "SELECT id FROM produtos WHERE codigo_barras = ?";

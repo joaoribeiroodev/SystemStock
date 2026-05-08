@@ -9,18 +9,6 @@ import java.sql.ResultSet;
 
 public class MovimentacaoDAO {
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // REGISTRAR MOVIMENTAÇÃO
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /**
-     * Insere uma movimentação (ENTRADA ou SAIDA) para um produto.
-     *
-     * @param produtoId ID do produto cadastrado
-     * @param tipo      "ENTRADA" ou "SAIDA"
-     * @param qtd       Quantidade movimentada
-     * @return true se o registro foi salvo com sucesso, false caso contrário
-     */
     public boolean registrar(int produtoId, String tipo, long qtd) {
         if (produtoId <= 0 || tipo == null || tipo.isBlank() || qtd <= 0) {
             System.err.println("[MovimentacaoDAO] Parâmetros inválidos para registrar movimentação.");
@@ -51,22 +39,13 @@ public class MovimentacaoDAO {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // BUSCAR DADOS PARA O GRÁFICO
-    // ─────────────────────────────────────────────────────────────────────────
 
-    /**
-     * Retorna entradas e saídas agrupadas por mês para o ano informado.
-     * Se {@code ano} for 0 ou negativo, usa o ano atual do banco.
-     *
-     * @param ano Ano de referência (ex: 2025). Passe 0 para o ano atual.
-     * @return GraficoModel com 12 posições em cada lista (uma por mês)
-     */
+
+
     public GraficoModel buscarDadosGrafico(int ano) {
         GraficoModel grafico = new GraficoModel();
         grafico.setAno(ano > 0 ? ano : java.time.Year.now().getValue());
 
-        // Subconsulta que garante os 12 meses, mesmo sem movimentações registradas
         String sql =
             "SELECT " +
             "  m.mes, " +
@@ -102,7 +81,6 @@ public class MovimentacaoDAO {
             grafico.setErro("Falha ao carregar dados do banco de dados.");
         }
 
-        // Garante que sempre retorna 12 posições por segurança
         grafico.garantirDozeMeses();
         return grafico;
     }

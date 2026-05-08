@@ -10,13 +10,13 @@ import java.io.IOException;
 import model.CadastroUsuarioModel;
 
 @WebServlet("/pages/cadastro")
-public class CadastroController extends HttpServlet{
-    
+public class CadastroController extends HttpServlet {
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-              throws ServletException, IOException {
-              
+            throws ServletException, IOException {
+
         CadastroUsuarioModel user = new CadastroUsuarioModel();
-        
+
         user.setNome(request.getParameter("nameFirst"));
         user.setSobrenome(request.getParameter("sobreNome"));
         user.setMatricula(request.getParameter("matricula"));
@@ -33,15 +33,19 @@ public class CadastroController extends HttpServlet{
         user.setCidade(request.getParameter("cidade"));
         user.setBairro(request.getParameter("bairro"));
         user.setEstado(request.getParameter("estado"));
-        user.setNumero(Long.parseLong((request.getParameter("numero"))));
         user.setComplemento(request.getParameter("complemento"));
-        
+
+
+        user.setNumero(request.getParameter("numero"));
+
         CadastroUsersDAO dao = new CadastroUsersDAO();
-        
-        if(dao.cadastrar(user)) {
-            response.sendRedirect("dashboard.html");
-        }else{
-            response.sendRedirect("pages/cadastro.html");
+
+        if (dao.cadastrar(user)) {
+
+            response.sendRedirect(request.getContextPath() + "/pages/dashboard.html");
+        } else {
+
+            response.sendRedirect(request.getContextPath() + "/pages/cadastro.html");
         }
     }
 }

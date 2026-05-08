@@ -1,20 +1,7 @@
-/**
- * grafico.js
- * Lógica do gráfico de movimentações (Entradas vs Saídas por mês).
- */
-
 const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-let instanciaGrafico = null; // Guarda referência para destruir antes de recriar
+let instanciaGrafico = null;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// BUSCAR DADOS DA API
-// ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Faz o fetch na API Java e retorna o JSON com entradas/saídas.
- * @param {number} ano - Ano a ser filtrado
- * @returns {Promise<{entradas: number[], saidas: number[], erro?: string}>}
- */
 async function buscarDadosGrafico(ano) {
     const response = await fetch(`../api/dadosGrafico?ano=${ano}`);
 
@@ -31,18 +18,7 @@ async function buscarDadosGrafico(ano) {
     return dados;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// RENDERIZAR GRÁFICO
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Cria (ou atualiza) o gráfico de barras com os dados recebidos.
- * @param {CanvasRenderingContext2D} ctx
- * @param {{entradas: number[], saidas: number[]}} dados
- * @param {number} ano
- */
 function renderizarGrafico(ctx, dados, ano) {
-    // Destrói instância anterior para evitar sobreposição de gráficos
     if (instanciaGrafico) {
         instanciaGrafico.destroy();
         instanciaGrafico = null;
@@ -86,7 +62,6 @@ function renderizarGrafico(ctx, dados, ano) {
                 },
                 tooltip: {
                     callbacks: {
-                        // Exibe rótulo formatado no tooltip
                         label: (context) => {
                             const label = context.dataset.label.split(' (')[0];
                             return ` ${label}: ${context.parsed.y} unidades`;
@@ -99,7 +74,6 @@ function renderizarGrafico(ctx, dados, ano) {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        // Garante que o eixo Y sempre mostre números inteiros
                         precision: 0,
                         stepSize: 1
                     }
@@ -108,10 +82,6 @@ function renderizarGrafico(ctx, dados, ano) {
         }
     });
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ESTADO DE CARREGAMENTO / ERRO
-// ─────────────────────────────────────────────────────────────────────────────
 
 function mostrarCarregando(container, visivel) {
     let loader = document.getElementById('graficoLoader');
@@ -141,14 +111,7 @@ function mostrarErro(container, mensagem) {
     erroEl.style.display = mensagem ? 'block' : 'none';
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SELETOR DE ANO
-// ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Cria dinamicamente o <select> de anos (do ano atual até 5 anos atrás)
- * e o insere antes do canvas.
- */
 function criarSeletorAno(anoAtual, onMudanca) {
     const wrapper = document.createElement('div');
     wrapper.style.cssText = 'display:flex; align-items:center; gap:8px; margin-bottom:12px;';
@@ -177,9 +140,6 @@ function criarSeletorAno(anoAtual, onMudanca) {
     return wrapper;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// INICIALIZAÇÃO PRINCIPAL
-// ─────────────────────────────────────────────────────────────────────────────
 
 async function inicializarGrafico() {
     const canvas = document.getElementById('graficoGerenciamento');
@@ -188,17 +148,13 @@ async function inicializarGrafico() {
     const container = canvas.parentElement;
     const anoAtual  = new Date().getFullYear();
 
-    // Insere o seletor de ano antes do canvas
     const seletor = criarSeletorAno(anoAtual, (anoSelecionado) => carregarEDesenhar(anoSelecionado));
     container.insertBefore(seletor, canvas);
 
     await carregarEDesenhar(anoAtual);
 }
 
-/**
- * Orquestra: mostra loading → busca API → desenha gráfico → trata erros.
- * @param {number} ano
- */
+
 async function carregarEDesenhar(ano) {
     const canvas = document.getElementById('graficoGerenciamento');
     const ctx    = canvas.getContext('2d');

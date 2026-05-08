@@ -5,14 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd4966f3-4156-41d9-bbb6-a7a6855d9519" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/cadastro.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/cadastro.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/cadastroProduto.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/cadastroProduto.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/color.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/color.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/dashboard.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/dashboard.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/login.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/login.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/reset.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/reset.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/pages/cadastro.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/pages/cadastro.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/pages/cadastroProduto.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/pages/cadastroProduto.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controller/CadastroProdutosController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/CadastroController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/CadastroController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/CadastroProdutoDAO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/GraficoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/GraficoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/PerfilController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/PerfilController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/ResumoEstoqueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/ResumoEstoqueController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dao/CadastroProdutoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/CadastroProdutoDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dao/CadastroUsersDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/CadastroUsersDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dao/MovimentacaoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/MovimentacaoDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/CadastroUsuarioModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/CadastroUsuarioModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/GraficoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/GraficoModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/AuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/AuthFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/util/GerarSenha.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/gerenciamento.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/gerenciamento.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/dashboard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/grafico.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/grafico.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/pages/gerenciamento.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/pages/gerenciamento.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

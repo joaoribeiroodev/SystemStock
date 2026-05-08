@@ -12,7 +12,6 @@ body {
     color: #333;
 }
 
-/* ── Header ── */
 #header {
     background: #1a1a2e;
     color: #fff;
@@ -44,7 +43,6 @@ body {
     color: #fff;
 }
 
-/* ── Main ── */
 main {
     max-width: 860px;
     margin: 2rem auto;
@@ -65,12 +63,10 @@ main {
     color: #1a1a2e;
 }
 
-/* ── Seletor de ano (estilo base, o JS complementa) ── */
 #seletorAno {
     cursor: pointer;
 }
 
-/* ── Canvas ── */
 #graficoGerenciamento {
     width: 100% !important;
 }
