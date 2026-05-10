@@ -24,13 +24,25 @@ public class GraficoController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         int ano = parseAno(request.getParameter("ano"));
+        String codigoBarras = request.getParameter("codigoBarras");
 
         try {
             MovimentacaoDAO dao = new MovimentacaoDAO();
-            GraficoModel dados = dao.buscarDadosGrafico(ano);
+            GraficoModel dados;
 
-            if (dados.getErro() != null) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            if (codigoBarras != null && !codigoBarras.isBlank()) {
+                dados = dao.buscarDadosGraficoPorCodigoBarras(codigoBarras.trim(), ano);
+                if (dados.getErro() != null) {
+                    boolean naoEncontrado = "Produto não encontrado para este código de barras.".equals(dados.getErro());
+                    response.setStatus(
+                        naoEncontrado ? HttpServletResponse.SC_NOT_FOUND : HttpServletResponse.SC_INTERNAL_SERVER_ERROR
+                    );
+                }
+            } else {
+                dados = dao.buscarDadosGrafico(ano);
+                if (dados.getErro() != null) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
             }
 
             response.getWriter().write(GSON.toJson(dados));

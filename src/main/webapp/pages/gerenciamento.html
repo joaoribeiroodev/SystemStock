@@ -52,6 +52,20 @@
                 <div class="card-header">
                     <h2 class="card-titulo">Movimentações de Estoque</h2>
                 </div>
+                <div class="grafico-filtros">
+                    <span class="grafico-filtros-label">Produto</span>
+                    <div class="grafico-filtros-row">
+                        <input type="text" id="buscaProdutoGrafico" class="grafico-filtros-input"
+                               list="listaProdutosGrafico"
+                               placeholder="Digite nome ou código de barras"
+                               autocomplete="off"
+                               aria-describedby="graficoFiltroHint">
+                        <datalist id="listaProdutosGrafico"></datalist>
+                        <button type="button" id="btnGraficoAplicarProduto" class="btn-grafico-filtro">Aplicar</button>
+                        <button type="button" id="btnGraficoLimparProduto" class="btn-grafico-filtro btn-grafico-filtro-sec" title="Mostrar todas as movimentações">Todos os produtos</button>
+                    </div>
+                    <p class="grafico-filtro-hint" id="graficoFiltroHint" role="status"></p>
+                </div>
                 <div class="grafico-wrapper">
                     <canvas id="graficoGerenciamento"></canvas>
                 </div>

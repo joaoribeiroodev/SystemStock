@@ -203,6 +203,91 @@ body {
     letter-spacing: -0.2px;
 }
 
+/* Filtro do gráfico (apenas código de barras na requisição) */
+.grafico-filtros {
+    padding: 0 2rem 1rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.grafico-filtros-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+}
+
+.grafico-filtros-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.grafico-filtros-input {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(11, 15, 25, 0.7);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    padding: 0.55rem 0.85rem;
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.grafico-filtros-input:focus {
+    border-color: rgba(79, 172, 254, 0.45);
+    background: rgba(11, 15, 25, 0.9);
+}
+
+.btn-grafico-filtro {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.55rem 0.95rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+    background: var(--gradient-primary);
+    color: #0b0f19;
+}
+
+.btn-grafico-filtro:hover {
+    filter: brightness(1.06);
+}
+
+.btn-grafico-filtro-sec {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: var(--glass-border);
+}
+
+.btn-grafico-filtro-sec:hover {
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.grafico-filtro-hint {
+    margin: 0.65rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    min-height: 1.2em;
+}
+
+.grafico-filtro-hint.aviso {
+    color: #f39c12;
+}
+
+.grafico-filtro-hint.erro {
+    color: #e74c3c;
+}
+
 /* ===== GRÁFICO ===== */
 .grafico-wrapper {
     padding: 1.5rem 2rem 2rem;
@@ -210,7 +295,7 @@ body {
 
 #graficoGerenciamento {
     width: 100% !important;
-    max-height: 550px;
+    max-height: 580px;
 }
 
 /* Sobrescreve estilo do seletor de ano criado pelo grafico.js */

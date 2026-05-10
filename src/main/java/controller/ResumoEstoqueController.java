@@ -25,6 +25,7 @@ public class ResumoEstoqueController extends HttpServlet {
                          SUM(CASE WHEN status = 'ENTRADA' THEN quantidade ELSE 0 END) AS entrada,
                          SUM(CASE WHEN status = 'SAIDA'   THEN quantidade ELSE 0 END) AS saida
                      FROM produtos
+                     WHERE ativo = TRUE
                      """;
 
         response.setContentType("application/json");

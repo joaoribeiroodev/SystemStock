@@ -84,4 +84,84 @@ public class MovimentacaoDAO {
         grafico.garantirDozeMeses();
         return grafico;
     }
+
+    /**
+     * Séries mensais filtradas pelo código de barras (único identificador aceito na camada de API).
+     */
+    public GraficoModel buscarDadosGraficoPorCodigoBarras(String codigoBarras, int ano) {
+        GraficoModel grafico = new GraficoModel();
+        int anoEfetivo = ano > 0 ? ano : java.time.Year.now().getValue();
+        grafico.setAno(anoEfetivo);
+
+        if (codigoBarras == null || codigoBarras.isBlank()) {
+            grafico.setErro("Informe um código de barras válido.");
+            grafico.garantirDozeMeses();
+            return grafico;
+        }
+
+        final String codigo = codigoBarras.trim();
+
+        String sqlNome = "SELECT nome_produto FROM produtos WHERE codigo_barras = ?";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement psNome = conn.prepareStatement(sqlNome)) {
+
+            psNome.setString(1, codigo);
+
+            try (ResultSet rsNome = psNome.executeQuery()) {
+                if (!rsNome.next()) {
+                    grafico.setErro("Produto não encontrado para este código de barras.");
+                    grafico.garantirDozeMeses();
+                    return grafico;
+                }
+                grafico.setNomeProduto(rsNome.getString("nome_produto"));
+            }
+
+        } catch (Exception e) {
+            System.err.println("[MovimentacaoDAO] Erro ao validar código de barras: " + e.getMessage());
+            e.printStackTrace();
+            grafico.setErro("Falha ao consultar produto.");
+            grafico.garantirDozeMeses();
+            return grafico;
+        }
+
+        String sql =
+            "SELECT " +
+            "  m.mes, " +
+            "  COALESCE(SUM(CASE WHEN mov.tipo = 'ENTRADA' THEN mov.quantidade ELSE 0 END), 0) AS total_entrada, " +
+            "  COALESCE(SUM(CASE WHEN mov.tipo = 'SAIDA'   THEN mov.quantidade ELSE 0 END), 0) AS total_saida " +
+            "FROM ( " +
+            "  SELECT 1 AS mes UNION ALL SELECT 2 UNION ALL SELECT 3  UNION ALL " +
+            "  SELECT 4        UNION ALL SELECT 5 UNION ALL SELECT 6  UNION ALL " +
+            "  SELECT 7        UNION ALL SELECT 8 UNION ALL SELECT 9  UNION ALL " +
+            "  SELECT 10       UNION ALL SELECT 11 UNION ALL SELECT 12 " +
+            ") AS m " +
+            "LEFT JOIN movimentacoes mov " +
+            "  ON MONTH(mov.data_movimentacao) = m.mes " +
+            " AND YEAR(mov.data_movimentacao)  = ? " +
+            " AND mov.produto_id = (SELECT id FROM produtos WHERE codigo_barras = ? LIMIT 1) " +
+            "GROUP BY m.mes " +
+            "ORDER BY m.mes";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, anoEfetivo);
+            ps.setString(2, codigo);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    grafico.getEntradas().add(rs.getLong("total_entrada"));
+                    grafico.getSaidas().add(rs.getLong("total_saida"));
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("[MovimentacaoDAO] Erro ao buscar dados do gráfico por código: " + e.getMessage());
+            e.printStackTrace();
+            grafico.setErro("Falha ao carregar dados do banco de dados.");
+        }
+
+        grafico.garantirDozeMeses();
+        return grafico;
+    }
 }
