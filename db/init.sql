@@ -46,6 +46,7 @@ CREATE TABLE produtos (
     total            DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
 
     status           ENUM('ENTRADA', 'SAIDA') NOT NULL,
+    ativo            BOOLEAN NOT NULL DEFAULT TRUE,
 
     criado_em        TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em    TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

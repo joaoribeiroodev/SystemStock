@@ -11,16 +11,12 @@ import java.util.List;
 public class CadastroProdutoDAO {
 
 
+    //   Salvar (INSERT)
 
     public boolean salvar(CadastroProdutoModel produto) {
-        String sql =
-                "INSERT INTO produtos " +
-                        "(codigo_barras, nome_produto, fabricante, marca, " +
-                        " data_fabricacao, data_vencimento, quantidade, valor, total, status) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO produtos " + "(codigo_barras, nome_produto, fabricante, marca, " + " data_fabricacao, data_vencimento, quantidade, valor, total, status) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, produto.getCodigoBarras());
             stmt.setString(2, produto.getNomeProduto());
@@ -44,23 +40,25 @@ public class CadastroProdutoDAO {
     }
 
 
+     //  CORRIGIDO: Filtra apenas produtos ativos (Soft Delete)
 
     public List<CadastroProdutoModel> listarComFiltro(String nome, String tipo, String data) {
         List<CadastroProdutoModel> lista = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM produtos WHERE 1=1");
+        // ⚠️ MUDANÇA AQUI: Troquei WHERE 1=1 por WHERE ativo = TRUE
+        StringBuilder sql = new StringBuilder("SELECT * FROM produtos WHERE ativo = TRUE");
+
 
         if (nome != null && !nome.isBlank()) sql.append(" AND LOWER(nome_produto) LIKE ?");
-        if (tipo != null && !tipo.isBlank())  sql.append(" AND status = ?");
-        if (data != null && !data.isBlank())  sql.append(" AND data_fabricacao = ?");
+        if (tipo != null && !tipo.isBlank()) sql.append(" AND status = ?");
+        if (data != null && !data.isBlank()) sql.append(" AND data_fabricacao = ?");
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
             int index = 1;
             if (nome != null && !nome.isBlank()) stmt.setString(index++, "%" + nome.toLowerCase() + "%");
-            if (tipo != null && !tipo.isBlank())  stmt.setString(index++, tipo.toUpperCase());
-            if (data != null && !data.isBlank())  stmt.setString(index++, data);
+            if (tipo != null && !tipo.isBlank()) stmt.setString(index++, tipo.toUpperCase());
+            if (data != null && !data.isBlank()) stmt.setString(index++, data);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -72,11 +70,13 @@ public class CadastroProdutoDAO {
                     p.setDataFabricacao(rs.getDate("data_fabricacao").toLocalDate().toString());
                     p.setDataVencimento(rs.getDate("data_vencimento").toLocalDate().toString());
                     p.setQuantidade(rs.getLong("quantidade"));
-
                     p.setValor(rs.getBigDecimal("valor").toPlainString());
                     p.setTotal(rs.getBigDecimal("total").toPlainString());
-
                     p.setStatus(rs.getString("status"));
+
+                    // Lê o status do banco (opcional, já que todos aqui serão true)
+                    p.setAtivo(rs.getBoolean("ativo"));
+
                     lista.add(p);
                 }
             }
@@ -90,12 +90,58 @@ public class CadastroProdutoDAO {
     }
 
 
+      // Atualizar (UPDATE) — identificado por codigoBarras
+
+    public boolean atualizar(CadastroProdutoModel produto) {
+        String sql = "UPDATE produtos SET " + "nome_produto = ?, fabricante = ?, marca = ?, " + "data_fabricacao = ?, data_vencimento = ?, " + "quantidade = ?, valor = ?, total = ?, status = ? " + "WHERE codigo_barras = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, produto.getNomeProduto());
+            stmt.setString(2, produto.getFabricante());
+            stmt.setString(3, produto.getMarca());
+            stmt.setDate(4, Date.valueOf(produto.getDataFabricacao()));
+            stmt.setDate(5, Date.valueOf(produto.getDataVencimento()));
+            stmt.setLong(6, produto.getQuantidade());
+            stmt.setBigDecimal(7, new BigDecimal(produto.getValor()));
+            stmt.setBigDecimal(8, new BigDecimal(produto.getTotal()));
+            stmt.setString(9, produto.getStatus().toUpperCase());
+            stmt.setString(10, produto.getCodigoBarras());  // ← chave: codigoBarras
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("[CadastroProdutoDAO] Erro ao atualizar produto: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+     //  Excluir por Código de Barras (DELETE)
+
+    public boolean excluirPorCodigo(String codigoBarras) throws SQLException {
+        String sql = "UPDATE produtos SET ativo = FALSE, atualizado_em = CURRENT_TIMESTAMP WHERE codigo_barras = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codigoBarras);
+            int linhasAfetadas = stmt.executeUpdate();
+
+
+            return linhasAfetadas > 0;
+        }
+
+    }
+
+
+    //   Buscar ID por Código de Barras
 
     public int buscarIdPorCodigo(String codigoBarras) {
         String sql = "SELECT id FROM produtos WHERE codigo_barras = ?";
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, codigoBarras);
 

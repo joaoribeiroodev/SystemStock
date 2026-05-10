@@ -5,24 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd4966f3-4156-41d9-bbb6-a7a6855d9519" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/controller/CadastroProdutosController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/controller/GerenciamentoProdutosController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/gerenciamento.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/CadastroController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/CadastroController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/CadastroProdutoDAO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/GraficoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/GraficoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/PerfilController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/PerfilController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/controller/ResumoEstoqueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/ResumoEstoqueController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/connection/ConnectionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/connection/ConnectionFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dao/CadastroProdutoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/CadastroProdutoDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dao/CadastroUsersDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/CadastroUsersDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dao/MovimentacaoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/MovimentacaoDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/CadastroUsuarioModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/CadastroUsuarioModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/GraficoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/GraficoModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/AuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/util/AuthFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/GerarSenha.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/CadastroProdutoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/CadastroProdutoModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/css/gerenciamento.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/gerenciamento.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/grafico.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/grafico.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/pages/gerenciamento.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/pages/gerenciamento.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,6 +24,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="JavaScript File" />
         <option value="Class" />
       </list>
     </option>

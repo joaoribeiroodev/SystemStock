@@ -1,8 +1,7 @@
 package model;
 
 public class CadastroProdutoModel {
-    
-    private int id;
+
     private String codigoBarras;
     private String nomeProduto;
     private String fabricante;
@@ -13,7 +12,9 @@ public class CadastroProdutoModel {
     private String valor;
     private String total;
     private String status;
+    private boolean ativo;
 
+    /* ── codigoBarras ── */
     public String getCodigoBarras() {
         return codigoBarras;
     }
@@ -22,6 +23,7 @@ public class CadastroProdutoModel {
         this.codigoBarras = codigoBarras;
     }
 
+    /* ── nomeProduto ── */
     public String getNomeProduto() {
         return nomeProduto;
     }
@@ -30,6 +32,7 @@ public class CadastroProdutoModel {
         this.nomeProduto = nomeProduto;
     }
 
+    /* ── fabricante ── */
     public String getFabricante() {
         return fabricante;
     }
@@ -38,6 +41,7 @@ public class CadastroProdutoModel {
         this.fabricante = fabricante;
     }
 
+    /* ── marca ── */
     public String getMarca() {
         return marca;
     }
@@ -46,6 +50,7 @@ public class CadastroProdutoModel {
         this.marca = marca;
     }
 
+    /* ── dataFabricacao ── */
     public String getDataFabricacao() {
         return dataFabricacao;
     }
@@ -54,6 +59,7 @@ public class CadastroProdutoModel {
         this.dataFabricacao = dataFabricacao;
     }
 
+    /* ── dataVencimento ── */
     public String getDataVencimento() {
         return dataVencimento;
     }
@@ -62,6 +68,7 @@ public class CadastroProdutoModel {
         this.dataVencimento = dataVencimento;
     }
 
+    /* ── quantidade ── */
     public long getQuantidade() {
         return quantidade;
     }
@@ -70,6 +77,7 @@ public class CadastroProdutoModel {
         this.quantidade = quantidade;
     }
 
+    /* ── valor ── */
     public String getValor() {
         return valor;
     }
@@ -78,6 +86,7 @@ public class CadastroProdutoModel {
         this.valor = valor;
     }
 
+    /* ── total ── */
     public String getTotal() {
         return total;
     }
@@ -85,12 +94,21 @@ public class CadastroProdutoModel {
     public void setTotal(String total) {
         this.total = total;
     }
-    
+
+    /* ── status ── */
     public String getStatus() {
         return status;
     }
-    
+
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 }

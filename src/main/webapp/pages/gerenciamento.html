@@ -4,60 +4,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/color.css" />
     <link rel="stylesheet" href="../css/gerenciamento.css">
     <title>Gerenciamento</title>
 </head>
 
 <body>
-    <header id="header">
-        <h1 id="tituloCadastro">SystemStock</h1>
-        <nav id="menu">
-            <ul class="menu-lista">
-                <li><a href="dashboard.html">Início</a></li>
-                <li><a href="#">Gerenciamento</a></li>
-            </ul>
+
+<!-- ===== HEADER ===== -->
+<header id="header">
+    <h1 id="tituloCadastro">SystemStock</h1>
+    <nav id="menu">
+        <ul class="menu-lista">
+            <li><a href="dashboard.html">Início</a></li>
+            <li><a href="gerenciamento.html" class="ativo-nav">Gerenciamento</a></li>
+            <li><a href="cadastro.html" class="btn-menu">Cadastro</a></li>
+            <li><a href="#" id="btnLogout" class="btn-menu btn-logout">Sair</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- ===== LAYOUT PRINCIPAL ===== -->
+<div class="layout">
+
+    <!-- Sidebar de Navegação -->
+    <aside class="sidebar">
+        <p class="sidebar-titulo">Seções</p>
+        <nav class="sidebar-nav">
+            <a href="#secao-grafico" class="sidebar-link ativo-sidebar" data-secao="grafico">
+                <span class="sidebar-icon">📊</span>
+                <span>Gráfico</span>
+            </a>
+            <a href="#secao-produtos" class="sidebar-link" data-secao="produtos">
+                <span class="sidebar-icon">📦</span>
+                <span>Produtos</span>
+            </a>
         </nav>
-    </header>
+    </aside>
 
-    <section class="nav-lateral">
-        <h1>Navegação</h1>
-        <nav class="navegacao-lteral">
-            <a href="">Gráfico</a>
-            <a href="">Produtos</a>
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
 
-        </nav>
-    </section>
-
-    <main>
-        <section id="grafico">
-            <div class="card-grafico">
-                <h2>Movimentações de Estoque</h2>
-                <canvas id="graficoGerenciamento"></canvas>
+        <!-- ===== SEÇÃO: GRÁFICO ===== -->
+        <section id="secao-grafico" class="secao">
+            <div class="card-glass">
+                <div class="card-header">
+                    <h2 class="card-titulo">Movimentações de Estoque</h2>
+                </div>
+                <div class="grafico-wrapper">
+                    <canvas id="graficoGerenciamento"></canvas>
+                </div>
             </div>
         </section>
 
-        <section id="ProdutosGerenciamento">
-            <div class="tabela-wrapper">
-                <table id="tabelaProdGerenciamento">
-                    <thead>
+        <!-- ===== SEÇÃO: PRODUTOS ===== -->
+        <section id="secao-produtos" class="secao">
+            <div class="card-glass">
+
+                <!-- Cabeçalho com busca -->
+                <div class="card-header">
+                    <h2 class="card-titulo">Gerenciamento de Produtos</h2>
+                    <div class="toolbar">
+                        <div class="campo-busca">
+                            <svg class="icone-busca" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" id="buscaProduto" class="input-busca" placeholder="Buscar produto...">
+                        </div>
+                        <a href="cadastroProduto.html" class="btn-novo">
+                            <span>+</span> Novo Produto
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Estado: Carregando -->
+                <div id="estadoCarregando" class="estado-vazio">
+                    <div class="spinner"></div>
+                    <p>Carregando produtos...</p>
+                </div>
+
+                <!-- Estado: Sem dados -->
+                <div id="estadoVazio" class="estado-vazio" style="display:none;">
+                    <span class="estado-icone">📭</span>
+                    <p>Nenhum produto encontrado.</p>
+                    <a href="cadastroProduto.html" class="btn-novo" style="margin-top:1rem;">Cadastrar Produto</a>
+                </div>
+
+                <!-- Estado: Erro -->
+                <div id="estadoErro" class="estado-vazio" style="display:none;">
+                    <span class="estado-icone">⚠️</span>
+                    <p id="mensagemErro">Erro ao carregar produtos.</p>
+                    <button onclick="carregarProdutos()" class="btn-novo" style="margin-top:1rem;">Tentar novamente</button>
+                </div>
+
+                <!-- Tabela de Produtos -->
+                <div class="tabela-wrapper" id="tabelaWrapper" style="display:none;">
+                    <table id="tabelaGerenciamento">
+                        <thead>
                         <tr>
-                            <th>Código de barras</th>
-                            <th>Nome</th>
-                            <th>Quantidade</th>
-                            <th>Valor unitário</th>
+                            <th>Código de Barras</th>
+                            <th>Nome do Produto</th>
+                            <th>Qtd.</th>
+                            <th>Valor Unit.</th>
                             <th>Total</th>
-                            <th>Status</th> 
+                            <th>Status</th>
+                            <th>Ações</th>
                         </tr>
-                    </thead>
-                    <tbody id="tabelaGerenciamentoProdutos">
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody id="corpoTabelaGerenciamento">
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
         </section>
+
     </main>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../js/grafico.js"></script>
+<!-- ===== MODAL DE CRUD ===== -->
+<div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalNomeProduto">
+    <div class="modal">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div>
+                <p class="modal-subtitulo">Gerenciar Produto</p>
+                <h3 id="modalNomeProduto" class="modal-titulo">—</h3>
+            </div>
+            <button class="btn-fechar-modal" onclick="fecharModal()" aria-label="Fechar modal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Abas -->
+        <div class="modal-abas">
+            <button class="btn-aba ativo" data-aba="detalhes" onclick="mudarAba('detalhes')">Detalhes</button>
+            <button class="btn-aba" data-aba="editar" onclick="mudarAba('editar')">Editar</button>
+            <button class="btn-aba btn-aba-perigo" data-aba="excluir" onclick="mudarAba('excluir')">Excluir</button>
+        </div>
+
+        <!-- Aba: Detalhes -->
+        <div id="aba-detalhes" class="aba-conteudo ativo">
+            <div class="detalhes-grid">
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Código de Barras</span>
+                    <span id="det-codigo" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Fabricante</span>
+                    <span id="det-fabricante" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Marca</span>
+                    <span id="det-marca" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Quantidade</span>
+                    <span id="det-quantidade" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Valor Unitário</span>
+                    <span id="det-valor" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Total</span>
+                    <span id="det-total" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Data de Fabricação</span>
+                    <span id="det-dataFabricacao" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Data de Vencimento</span>
+                    <span id="det-dataVencimento" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item full">
+                    <span class="detalhe-label">Status</span>
+                    <span id="det-status" class="detalhe-valor">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba: Editar -->
+        <div id="aba-editar" class="aba-conteudo">
+            <div class="form-edicao">
+                <input type="hidden" id="edit-codigoBarras">
+
+                <div class="form-grid">
+                    <div class="grupo-modal">
+                        <label for="edit-nomeProduto">Nome do Produto</label>
+                        <input type="text" id="edit-nomeProduto" class="input-modal">
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-fabricante">Fabricante</label>
+                        <input type="text" id="edit-fabricante" class="input-modal">
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-marca">Marca</label>
+                        <input type="text" id="edit-marca" class="input-modal">
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-quantidade">Quantidade</label>
+                        <input type="number" id="edit-quantidade" class="input-modal" min="0">
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-valor">Valor Unitário (R$)</label>
+                        <input type="number" id="edit-valor" class="input-modal" step="0.01" min="0">
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-total">Total (R$)</label>
+                        <input type="number" id="edit-total" class="input-modal" step="0.01" readonly>
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-dataFabricacao">Data de Fabricação</label>
+                        <input type="date" id="edit-dataFabricacao" class="input-modal">
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-dataVencimento">Data de Vencimento</label>
+                        <input type="date" id="edit-dataVencimento" class="input-modal">
+                    </div>
+                    <div class="grupo-modal full">
+                        <label for="edit-status">Status</label>
+                        <select id="edit-status" class="input-modal">
+                            <option value="ENTRADA">Entrada</option>
+                            <option value="SAIDA">Saída</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="edit-feedback" class="feedback" style="display:none;"></div>
+
+                <div class="modal-acoes">
+                    <button onclick="fecharModal()" class="btn-modal btn-secundario">Cancelar</button>
+                    <button onclick="salvarEdicao()" class="btn-modal btn-primario" id="btnSalvar">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba: Excluir -->
+        <div id="aba-excluir" class="aba-conteudo">
+            <div class="excluir-container">
+                <div class="excluir-icone">🗑️</div>
+                <h4 class="excluir-titulo">Confirmar Exclusão</h4>
+                <p class="excluir-descricao">
+                    Você está prestes a excluir o produto <strong id="excluir-nome">—</strong>.
+                    Essa ação não pode ser desfeita e também removerá o histórico de movimentações associado.
+                </p>
+                <div id="excluir-feedback" class="feedback" style="display:none;"></div>
+                <div class="modal-acoes">
+                    <button onclick="fecharModal()" class="btn-modal btn-secundario">Cancelar</button>
+                    <button onclick="confirmarExclusao()" class="btn-modal btn-perigo" id="btnExcluir">Excluir Produto</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/grafico.js"></script>
+<script src="../js/gerenciamento.js"></script>
+<script src="../js/logout.js"></script>
+
 </body>
-
 </html>

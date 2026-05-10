@@ -1,17 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package connection;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- *
- * @author 232.004057
- */
+
 public class ConnectionFactory {
 
     private static final String URL = System.getenv("DB_URL");
