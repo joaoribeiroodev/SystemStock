@@ -5,15 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd4966f3-4156-41d9-bbb6-a7a6855d9519" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/controller/GerenciamentoProdutosController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/gerenciamento.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/connection/ConnectionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/connection/ConnectionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/CadastroProdutosController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/CadastroProdutosController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/GerenciamentoProdutosController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/GerenciamentoProdutosController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/GraficoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/GraficoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/ResumoEstoqueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controller/ResumoEstoqueController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dao/CadastroProdutoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/CadastroProdutoDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dao/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/UserDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/CadastroProdutoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/CadastroProdutoModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dao/MovimentacaoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dao/MovimentacaoDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/GraficoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/GraficoModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/css/cadastroProduto.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/cadastroProduto.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/css/gerenciamento.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/css/gerenciamento.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/cadastroProduto.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/cadastroProduto.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/grafico.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/grafico.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/pages/cadastroProduto.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/pages/cadastroProduto.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/pages/gerenciamento.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/pages/gerenciamento.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -68,19 +72,6 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration name="GerarSenha" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="util.GerarSenha" />
-      <module name="SystemStock" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="util.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
         <option name="Make" enabled="true" />
@@ -90,11 +81,6 @@
       <option name="filePath" />
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.GerarSenha" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

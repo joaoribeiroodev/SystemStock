@@ -87,7 +87,7 @@ import java.io.IOException;
     }
 
 
-    // metodo de deletar produtos sem exclusão total no banco
+    // metodo de deletar produtos sem exclusão da movimentação no banco
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {

@@ -42,6 +42,23 @@ main { padding: 4rem 5%; display: flex; justify-content: center; }
     border: 1px solid var(--glass-border);
     width: 100%;
     max-width: 900px;
+    display: flex;
+    flex-direction: column;
+}
+
+.banner-erro-cadastro.oculto {
+    display: none;
+}
+
+.banner-erro-cadastro {
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(255, 99, 99, 0.45);
+    background: rgba(180, 40, 40, 0.2);
+    color: #ffb4b4;
+    font-size: 0.95rem;
+    line-height: 1.45;
 }
 
 #formCadastro {

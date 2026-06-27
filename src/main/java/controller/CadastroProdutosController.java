@@ -1,6 +1,7 @@
 package controller;
 
 import dao.CadastroProdutoDAO;
+import dao.CadastroProdutoDAO.ExistenciaCodigoBarras;
 import dao.MovimentacaoDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,6 +13,10 @@ import model.CadastroProdutoModel;
 
 @WebServlet("/cadastroProdutos")
 public class CadastroProdutosController extends HttpServlet {
+
+    private static String redirectErroCadastro(HttpServletRequest request, String codigoErro) {
+        return request.getContextPath() + "/pages/cadastroProduto.html?erro=" + codigoErro;
+    }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,6 +37,16 @@ public class CadastroProdutosController extends HttpServlet {
         CadastroProdutoDAO dao    = new CadastroProdutoDAO();
         MovimentacaoDAO    movDAO = new MovimentacaoDAO();
 
+        ExistenciaCodigoBarras existencia = dao.consultarExistenciaCodigoBarras(produto.getCodigoBarras());
+        if (existencia == ExistenciaCodigoBarras.JA_REGISTRADO_ATIVO) {
+            response.sendRedirect(redirectErroCadastro(request, "codigo_duplicado_ativo"));
+            return;
+        }
+        if (existencia == ExistenciaCodigoBarras.JA_REGISTRADO_INATIVO) {
+            response.sendRedirect(redirectErroCadastro(request, "codigo_duplicado_inativo"));
+            return;
+        }
+
         if (dao.salvar(produto)) {
 
             int produtoId = dao.buscarIdPorCodigo(produto.getCodigoBarras());
@@ -47,7 +62,7 @@ public class CadastroProdutosController extends HttpServlet {
 
             response.sendRedirect(request.getContextPath() + "/pages/dashboard.html");
         } else {
-            response.sendRedirect(request.getContextPath() + "/pages/cadastroProduto.html");
+            response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
         }
     }
 }

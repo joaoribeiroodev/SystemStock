@@ -10,6 +10,37 @@ import java.util.List;
 
 public class CadastroProdutoDAO {
 
+    /** Situação do código no banco (inclui registros inativos, que ainda ocupam UNIQUE). */
+    public enum ExistenciaCodigoBarras {
+        DISPONIVEL,
+        JA_REGISTRADO_ATIVO,
+        JA_REGISTRADO_INATIVO
+    }
+
+    public ExistenciaCodigoBarras consultarExistenciaCodigoBarras(String codigoBarras) {
+        if (codigoBarras == null || codigoBarras.isBlank()) {
+            return ExistenciaCodigoBarras.DISPONIVEL;
+        }
+        String sql = "SELECT ativo FROM produtos WHERE codigo_barras = ?";
+        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (conn == null) {
+                return ExistenciaCodigoBarras.DISPONIVEL;
+            }
+            ps.setString(1, codigoBarras.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return ExistenciaCodigoBarras.DISPONIVEL;
+                }
+                return rs.getBoolean("ativo")
+                        ? ExistenciaCodigoBarras.JA_REGISTRADO_ATIVO
+                        : ExistenciaCodigoBarras.JA_REGISTRADO_INATIVO;
+            }
+        } catch (Exception e) {
+            System.err.println("[CadastroProdutoDAO] Erro ao consultar código de barras: " + e.getMessage());
+            e.printStackTrace();
+            return ExistenciaCodigoBarras.DISPONIVEL;
+        }
+    }
 
     //   Salvar (INSERT)
 
