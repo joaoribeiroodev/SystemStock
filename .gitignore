@@ -1,3 +1,9 @@
 target/
 
 .env
+
+.cursor/
+
+.idea/
+
+.vscode/

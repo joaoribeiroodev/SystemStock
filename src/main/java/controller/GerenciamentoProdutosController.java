@@ -1,8 +1,6 @@
 package controller;
 
-import com.google.gson.Gson;
 import dao.CadastroProdutoDAO;
-import dao.MovimentacaoDAO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,13 +8,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.CadastroProdutoModel;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
     @WebServlet("/api/produtos/*")
     public class GerenciamentoProdutosController extends HttpServlet {
 
     private final CadastroProdutoDAO dao = new CadastroProdutoDAO();
-    private final MovimentacaoDAO movDAO = new MovimentacaoDAO();
-    private final Gson gson = new Gson();
 
 
 
@@ -47,27 +44,56 @@ import java.io.IOException;
                 return;
             }
 
+            String nomeProduto = request.getParameter("nomeProduto");
+            String fabricante = request.getParameter("fabricante");
+            String marca = request.getParameter("marca");
+            String dataFabricacao = request.getParameter("dataFabricacao");
+            String dataVencimento = request.getParameter("dataVencimento");
+            String valorStr = request.getParameter("valor");
+            String qtdMinStr = request.getParameter("quantidadeMinima");
+
+            if (isBlank(nomeProduto) || isBlank(fabricante) || isBlank(marca)
+                    || isBlank(dataFabricacao) || isBlank(dataVencimento)
+                    || isBlank(valorStr) || isBlank(qtdMinStr)) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"erro\":\"Preencha todos os campos obrigatórios.\"}");
+                return;
+            }
+
+            CadastroProdutoModel existente = dao.buscarPorCodigoBarras(codigoBarras);
+            if (existente == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"erro\":\"Nenhum produto encontrado para o código de barras informado.\"}");
+                return;
+            }
+
+            long quantidadeMinima = parsePositivo(qtdMinStr);
+            BigDecimal valor = parseValorPositivo(valorStr);
+
+            if (quantidadeMinima <= 0 || valor == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"erro\":\"Quantidade mínima e valor devem ser maiores que zero.\"}");
+                return;
+            }
+
+            long quantidadeAtual = existente.getQuantidade();
+
             CadastroProdutoModel produto = new CadastroProdutoModel();
             produto.setCodigoBarras(codigoBarras);
-            produto.setNomeProduto(request.getParameter("nomeProduto"));
-            produto.setFabricante(request.getParameter("fabricante"));
-            produto.setMarca(request.getParameter("marca"));
-            produto.setDataFabricacao(request.getParameter("dataFabricacao"));
-            produto.setDataVencimento(request.getParameter("dataVencimento"));
-            produto.setQuantidade(Long.parseLong(request.getParameter("quantidade")));
-            produto.setValor(request.getParameter("valor"));
-            produto.setTotal(request.getParameter("total"));
-            produto.setStatus(request.getParameter("status"));
+            produto.setNomeProduto(nomeProduto.trim());
+            produto.setFabricante(fabricante.trim());
+            produto.setMarca(marca.trim());
+            produto.setDataFabricacao(dataFabricacao);
+            produto.setDataVencimento(dataVencimento);
+            produto.setQuantidade(quantidadeAtual);
+            produto.setQuantidadeMinima(quantidadeMinima);
+            produto.setValor(valor.toPlainString());
+            produto.setTotal(valor.multiply(BigDecimal.valueOf(quantidadeAtual)).toPlainString());
+            produto.setStatus(existente.getStatus() != null ? existente.getStatus() : "ENTRADA");
 
             boolean sucesso = dao.atualizar(produto);
 
             if (sucesso) {
-                // Registra a movimentação após atualização
-                int produtoId = dao.buscarIdPorCodigo(codigoBarras);
-                if (produtoId > 0) {
-                    movDAO.registrar(produtoId, produto.getStatus(), produto.getQuantidade());
-                }
-
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write("{\"mensagem\":\"Produto atualizado com sucesso.\"}");
             } else {
@@ -128,6 +154,23 @@ import java.io.IOException;
             System.err.println("[GerenciamentoProdutosController] Erro SQL: " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"erro\":\"Erro no Banco de Dados: " + e.getMessage() + "\"}");
+        }
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private static long parsePositivo(String value) throws NumberFormatException {
+        return Long.parseLong(value.trim());
+    }
+
+    private static BigDecimal parseValorPositivo(String value) {
+        try {
+            BigDecimal bd = new BigDecimal(value.trim());
+            return bd.compareTo(BigDecimal.ZERO) > 0 ? bd : null;
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 

@@ -470,6 +470,34 @@ body {
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
+.badge-normal {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badge-baixo {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Formulário de movimentação */
+.form-movimentacao {
+    padding: 1.5rem 1.75rem 1.75rem;
+}
+
+.form-grid-mov {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mov-acoes {
+    padding-top: 0.5rem;
+}
+
 /* Botão de gerenciar individual */
 .btn-gerenciar {
     background: rgba(255, 255, 255, 0.05);
@@ -861,6 +889,10 @@ select.input-modal option {
     .detalhe-item.full,
     .grupo-modal.full {
         grid-column: 1;
+    }
+
+    .form-grid-mov {
+        grid-template-columns: 1fr;
     }
 
     .toolbar {

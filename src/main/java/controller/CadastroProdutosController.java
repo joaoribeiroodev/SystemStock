@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import model.CadastroProdutoModel;
 
 @WebServlet("/cadastroProdutos")
@@ -21,18 +22,53 @@ public class CadastroProdutosController extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String codigoBarras = request.getParameter("codigoBarras");
+        String nomeProduto = request.getParameter("nomeProduto");
+        String fabricante = request.getParameter("fabricante");
+        String marca = request.getParameter("marca");
+        String dataFabricacao = request.getParameter("dataFabricacao");
+        String dataVencimento = request.getParameter("dataVencimento");
+        String qtdStr = request.getParameter("quantidade");
+        String qtdMinStr = request.getParameter("quantidadeMinima");
+        String valorStr = request.getParameter("valor");
+        String status = request.getParameter("status");
+
+        if (isBlank(codigoBarras) || isBlank(nomeProduto) || isBlank(fabricante) || isBlank(marca)
+                || isBlank(dataFabricacao) || isBlank(dataVencimento)
+                || isBlank(qtdStr) || isBlank(qtdMinStr) || isBlank(valorStr) || isBlank(status)) {
+            response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
+            return;
+        }
+
+        long quantidade;
+        long quantidadeMinima;
+        BigDecimal valor;
+        try {
+            quantidade = Long.parseLong(qtdStr.trim());
+            quantidadeMinima = Long.parseLong(qtdMinStr.trim());
+            valor = new BigDecimal(valorStr.trim());
+            if (quantidade <= 0 || quantidadeMinima <= 0 || valor.compareTo(BigDecimal.ZERO) <= 0) {
+                response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
+                return;
+            }
+        } catch (NumberFormatException e) {
+            response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
+            return;
+        }
+
         CadastroProdutoModel produto = new CadastroProdutoModel();
 
-        produto.setCodigoBarras(request.getParameter("codigoBarras"));
-        produto.setNomeProduto(request.getParameter("nomeProduto"));
-        produto.setFabricante(request.getParameter("fabricante"));
-        produto.setMarca(request.getParameter("marca"));
-        produto.setDataFabricacao(request.getParameter("dataFabricacao"));
-        produto.setDataVencimento(request.getParameter("dataVencimento"));
-        produto.setQuantidade(Long.parseLong(request.getParameter("quantidade")));
-        produto.setValor(request.getParameter("valor"));
-        produto.setTotal(request.getParameter("total"));
-        produto.setStatus(request.getParameter("status"));
+        produto.setCodigoBarras(codigoBarras.trim());
+        produto.setNomeProduto(nomeProduto.trim());
+        produto.setFabricante(fabricante.trim());
+        produto.setMarca(marca.trim());
+        produto.setDataFabricacao(dataFabricacao);
+        produto.setDataVencimento(dataVencimento);
+        produto.setQuantidade(quantidade);
+        produto.setQuantidadeMinima(quantidadeMinima);
+        produto.setValor(valor.toPlainString());
+        produto.setTotal(valor.multiply(BigDecimal.valueOf(quantidade)).toPlainString());
+        produto.setStatus(status);
 
         CadastroProdutoDAO dao    = new CadastroProdutoDAO();
         MovimentacaoDAO    movDAO = new MovimentacaoDAO();
@@ -64,5 +100,9 @@ public class CadastroProdutosController extends HttpServlet {
         } else {
             response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
         }
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

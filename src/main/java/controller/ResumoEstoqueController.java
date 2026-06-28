@@ -22,10 +22,10 @@ public class ResumoEstoqueController extends HttpServlet {
 
         String sql = """
                      SELECT
-                         SUM(CASE WHEN status = 'ENTRADA' THEN quantidade ELSE 0 END) AS entrada,
-                         SUM(CASE WHEN status = 'SAIDA'   THEN quantidade ELSE 0 END) AS saida
-                     FROM produtos
-                     WHERE ativo = TRUE
+                         COALESCE(SUM(CASE WHEN m.tipo = 'ENTRADA' THEN m.quantidade ELSE 0 END), 0) AS entrada,
+                         COALESCE(SUM(CASE WHEN m.tipo = 'SAIDA'   THEN m.quantidade ELSE 0 END), 0) AS saida
+                     FROM movimentacoes m
+                     INNER JOIN produtos p ON p.id = m.produto_id AND p.ativo = TRUE
                      """;
 
         response.setContentType("application/json");

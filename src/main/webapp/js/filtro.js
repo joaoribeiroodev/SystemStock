@@ -12,14 +12,15 @@ async function filtroEstoque() {
         tabela.innerHTML = "";
 
         const filtrados = dados.filter(item => {
-            const matchNome = nome === "" || item.nomeProduto.toLowerCase().includes(nome);
-            const matchTipo = tipo === "" || item.status === tipo;
+            const matchNome = nome === "" || item.nomeProduto.toLowerCase().includes(nome.toLowerCase());
+            const matchTipo = tipo === "" || (item.status && item.status.toLowerCase() === tipo.toLowerCase());
             const matchData = data === "" || item.dataFabricacao === data;
 
             return matchNome && matchTipo && matchData;
         });
 
         filtrados.forEach(item => {
+            const nivel = item.nivel === 'BAIXO' ? 'Baixo' : 'Normal';
             const linha = `
             <tr>
                 <td>${item.codigoBarras}</td>
@@ -31,7 +32,7 @@ async function filtroEstoque() {
                 <td>${item.quantidade}</td>
                 <td>${parseFloat(item.valor).toFixed(2)}</td>
                 <td>${parseFloat(item.total).toFixed(2)}</td>
-                <td>${item.status}</td>
+                <td>${nivel}</td>
             </tr>
         `;
             tabela.innerHTML += linha;

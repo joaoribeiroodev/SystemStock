@@ -9,6 +9,7 @@ public class CadastroProdutoModel {
     private String dataFabricacao;
     private String dataVencimento;
     private long quantidade;
+    private long quantidadeMinima;
     private String valor;
     private String total;
     private String status;
@@ -75,6 +76,23 @@ public class CadastroProdutoModel {
 
     public void setQuantidade(long quantidade) {
         this.quantidade = quantidade;
+    }
+
+    /* ── quantidadeMinima ── */
+    public long getQuantidadeMinima() {
+        return quantidadeMinima;
+    }
+
+    public void setQuantidadeMinima(long quantidadeMinima) {
+        this.quantidadeMinima = quantidadeMinima;
+    }
+
+    /** Nível de estoque exibido na listagem (independente do tipo de movimentação). */
+    public String getNivel() {
+        if (quantidadeMinima > 0 && quantidade < quantidadeMinima) {
+            return "BAIXO";
+        }
+        return "NORMAL";
     }
 
     /* ── valor ── */

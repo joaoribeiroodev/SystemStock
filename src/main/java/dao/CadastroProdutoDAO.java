@@ -45,7 +45,7 @@ public class CadastroProdutoDAO {
     //   Salvar (INSERT)
 
     public boolean salvar(CadastroProdutoModel produto) {
-        String sql = "INSERT INTO produtos " + "(codigo_barras, nome_produto, fabricante, marca, " + " data_fabricacao, data_vencimento, quantidade, valor, total, status) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO produtos " + "(codigo_barras, nome_produto, fabricante, marca, " + " data_fabricacao, data_vencimento, quantidade, quantidade_minima, valor, total, status) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -56,9 +56,10 @@ public class CadastroProdutoDAO {
             stmt.setDate(5, Date.valueOf(produto.getDataFabricacao()));
             stmt.setDate(6, Date.valueOf(produto.getDataVencimento()));
             stmt.setLong(7, produto.getQuantidade());
-            stmt.setBigDecimal(8, new BigDecimal(produto.getValor()));
-            stmt.setBigDecimal(9, new BigDecimal(produto.getTotal()));
-            stmt.setString(10, produto.getStatus().toUpperCase());
+            stmt.setLong(8, produto.getQuantidadeMinima());
+            stmt.setBigDecimal(9, new BigDecimal(produto.getValor()));
+            stmt.setBigDecimal(10, new BigDecimal(produto.getTotal()));
+            stmt.setString(11, produto.getStatus().toUpperCase());
 
             stmt.executeUpdate();
             return true;
@@ -101,6 +102,7 @@ public class CadastroProdutoDAO {
                     p.setDataFabricacao(rs.getDate("data_fabricacao").toLocalDate().toString());
                     p.setDataVencimento(rs.getDate("data_vencimento").toLocalDate().toString());
                     p.setQuantidade(rs.getLong("quantidade"));
+                    p.setQuantidadeMinima(rs.getLong("quantidade_minima"));
                     p.setValor(rs.getBigDecimal("valor").toPlainString());
                     p.setTotal(rs.getBigDecimal("total").toPlainString());
                     p.setStatus(rs.getString("status"));
@@ -124,7 +126,7 @@ public class CadastroProdutoDAO {
       // Atualizar (UPDATE) — identificado por codigoBarras
 
     public boolean atualizar(CadastroProdutoModel produto) {
-        String sql = "UPDATE produtos SET " + "nome_produto = ?, fabricante = ?, marca = ?, " + "data_fabricacao = ?, data_vencimento = ?, " + "quantidade = ?, valor = ?, total = ?, status = ? " + "WHERE codigo_barras = ?";
+        String sql = "UPDATE produtos SET " + "nome_produto = ?, fabricante = ?, marca = ?, " + "data_fabricacao = ?, data_vencimento = ?, " + "quantidade = ?, quantidade_minima = ?, valor = ?, total = ?, status = ? " + "WHERE codigo_barras = ?";
 
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -134,10 +136,11 @@ public class CadastroProdutoDAO {
             stmt.setDate(4, Date.valueOf(produto.getDataFabricacao()));
             stmt.setDate(5, Date.valueOf(produto.getDataVencimento()));
             stmt.setLong(6, produto.getQuantidade());
-            stmt.setBigDecimal(7, new BigDecimal(produto.getValor()));
-            stmt.setBigDecimal(8, new BigDecimal(produto.getTotal()));
-            stmt.setString(9, produto.getStatus().toUpperCase());
-            stmt.setString(10, produto.getCodigoBarras());  // ← chave: codigoBarras
+            stmt.setLong(7, produto.getQuantidadeMinima());
+            stmt.setBigDecimal(8, new BigDecimal(produto.getValor()));
+            stmt.setBigDecimal(9, new BigDecimal(produto.getTotal()));
+            stmt.setString(10, produto.getStatus().toUpperCase());
+            stmt.setString(11, produto.getCodigoBarras());
 
             return stmt.executeUpdate() > 0;
 
@@ -167,8 +170,6 @@ public class CadastroProdutoDAO {
     }
 
 
-    //   Buscar ID por Código de Barras
-
     public int buscarIdPorCodigo(String codigoBarras) {
         String sql = "SELECT id FROM produtos WHERE codigo_barras = ?";
 
@@ -186,5 +187,123 @@ public class CadastroProdutoDAO {
         }
 
         return 0;
+    }
+
+    public CadastroProdutoModel buscarPorCodigoBarras(String codigoBarras) {
+        if (codigoBarras == null || codigoBarras.isBlank()) {
+            return null;
+        }
+
+        String sql = "SELECT * FROM produtos WHERE codigo_barras = ? AND ativo = TRUE";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codigoBarras.trim());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+
+                CadastroProdutoModel p = new CadastroProdutoModel();
+                p.setCodigoBarras(rs.getString("codigo_barras"));
+                p.setNomeProduto(rs.getString("nome_produto"));
+                p.setFabricante(rs.getString("fabricante"));
+                p.setMarca(rs.getString("marca"));
+                p.setDataFabricacao(rs.getDate("data_fabricacao").toLocalDate().toString());
+                p.setDataVencimento(rs.getDate("data_vencimento").toLocalDate().toString());
+                p.setQuantidade(rs.getLong("quantidade"));
+                p.setQuantidadeMinima(rs.getLong("quantidade_minima"));
+                p.setValor(rs.getBigDecimal("valor").toPlainString());
+                p.setTotal(rs.getBigDecimal("total").toPlainString());
+                p.setStatus(rs.getString("status"));
+                p.setAtivo(rs.getBoolean("ativo"));
+                return p;
+            }
+
+        } catch (Exception e) {
+            System.err.println("[CadastroProdutoDAO] Erro ao buscar produto por código: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Registra entrada/saída, atualiza estoque e total do produto em uma transação.
+     * @return null em sucesso, ou mensagem de erro
+     */
+    public String registrarMovimentacao(String codigoBarras, String tipo, long qtd) {
+        if (codigoBarras == null || codigoBarras.isBlank() || tipo == null || tipo.isBlank() || qtd <= 0) {
+            return "Informe produto, tipo e quantidade válidos (maior que zero).";
+        }
+
+        String tipoNorm = tipo.trim().toUpperCase();
+        if (!tipoNorm.equals("ENTRADA") && !tipoNorm.equals("SAIDA")) {
+            return "Tipo de movimentação inválido.";
+        }
+
+        String sqlSelect = "SELECT id, quantidade, valor FROM produtos WHERE codigo_barras = ? AND ativo = TRUE";
+        String sqlUpdate = "UPDATE produtos SET quantidade = ?, total = ?, status = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            if (conn == null) {
+                return "Falha na conexão com o banco de dados.";
+            }
+
+            conn.setAutoCommit(false);
+
+            int produtoId;
+            long quantidadeAtual;
+            BigDecimal valorUnit;
+
+            try (PreparedStatement psSelect = conn.prepareStatement(sqlSelect)) {
+                psSelect.setString(1, codigoBarras.trim());
+                try (ResultSet rs = psSelect.executeQuery()) {
+                    if (!rs.next()) {
+                        conn.rollback();
+                        return "Produto não encontrado ou inativo.";
+                    }
+                    produtoId = rs.getInt("id");
+                    quantidadeAtual = rs.getLong("quantidade");
+                    valorUnit = rs.getBigDecimal("valor");
+                }
+            }
+
+            long novaQuantidade = tipoNorm.equals("ENTRADA")
+                    ? quantidadeAtual + qtd
+                    : quantidadeAtual - qtd;
+
+            if (novaQuantidade < 0) {
+                conn.rollback();
+                return "Quantidade em estoque insuficiente para esta saída.";
+            }
+
+            BigDecimal novoTotal = valorUnit.multiply(BigDecimal.valueOf(novaQuantidade));
+
+            try (PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate)) {
+                psUpdate.setLong(1, novaQuantidade);
+                psUpdate.setBigDecimal(2, novoTotal);
+                psUpdate.setString(3, tipoNorm);
+                psUpdate.setInt(4, produtoId);
+                psUpdate.executeUpdate();
+            }
+
+            String sqlMov = "INSERT INTO movimentacoes (produto_id, tipo, quantidade) VALUES (?, ?, ?)";
+            try (PreparedStatement psMov = conn.prepareStatement(sqlMov)) {
+                psMov.setInt(1, produtoId);
+                psMov.setString(2, tipoNorm);
+                psMov.setLong(3, qtd);
+                psMov.executeUpdate();
+            }
+
+            conn.commit();
+            return null;
+
+        } catch (SQLException e) {
+            System.err.println("[CadastroProdutoDAO] Erro ao registrar movimentação: " + e.getMessage());
+            e.printStackTrace();
+            return "Erro ao registrar movimentação.";
+        }
     }
 }

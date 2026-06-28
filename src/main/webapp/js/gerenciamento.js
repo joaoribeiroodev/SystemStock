@@ -1,5 +1,4 @@
 
-
 'use strict';
 
 /* ──────────────────────────────────────────
@@ -16,8 +15,94 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializarBusca();
     inicializarSidebar();
     inicializarCalculoTotal();
+    inicializarMovimentacao();
     fecharModalAoClicarFora();
 });
+
+/* ──────────────────────────────────────────
+   Nível de estoque (status na listagem)
+────────────────────────────────────────── */
+function obterNivel(produto) {
+    if (produto.nivel) {
+        return produto.nivel;
+    }
+    const qtd = Number(produto.quantidade) || 0;
+    const min = Number(produto.quantidadeMinima) || 0;
+    if (min > 0 && qtd < min) {
+        return 'BAIXO';
+    }
+    return 'NORMAL';
+}
+
+function formatarNivel(nivel) {
+    if (nivel === 'BAIXO') return 'Baixo';
+    return 'Normal';
+}
+
+function classeBadgeNivel(nivel) {
+    return nivel === 'BAIXO' ? 'baixo' : 'normal';
+}
+
+/* ──────────────────────────────────────────
+   Validação de campos (> 0 e não vazios)
+────────────────────────────────────────── */
+function campoVazio(valor) {
+    return valor === null || valor === undefined || String(valor).trim() === '';
+}
+
+function numeroInvalido(valor) {
+    const n = Number(valor);
+    return Number.isNaN(n) || n <= 0;
+}
+
+function validarFormularioEdicao() {
+    const camposTexto = [
+        { id: 'edit-nomeProduto', nome: 'Nome do Produto' },
+        { id: 'edit-fabricante', nome: 'Fabricante' },
+        { id: 'edit-marca', nome: 'Marca' },
+        { id: 'edit-dataFabricacao', nome: 'Data de Fabricação' },
+        { id: 'edit-dataVencimento', nome: 'Data de Vencimento' }
+    ];
+
+    for (const campo of camposTexto) {
+        const el = document.getElementById(campo.id);
+        if (!el || campoVazio(el.value)) {
+            return `Preencha o campo "${campo.nome}".`;
+        }
+    }
+
+    const quantidadeMinima = document.getElementById('edit-quantidadeMinima').value;
+    const valor = document.getElementById('edit-valor').value;
+
+    if (numeroInvalido(quantidadeMinima)) {
+        return 'Quantidade mínima de estoque deve ser maior que zero.';
+    }
+    if (numeroInvalido(valor)) {
+        return 'Valor unitário deve ser maior que zero.';
+    }
+
+    return null;
+}
+
+function validarFormularioMovimentacao() {
+    const produtoInput = document.getElementById('mov-produto');
+    const tipo = document.getElementById('mov-tipo').value;
+    const quantidade = document.getElementById('mov-quantidade').value;
+    const codigo = resolverCodigoBarrasMovimentacao(produtoInput.value);
+
+    if (campoVazio(produtoInput.value) || !codigo) {
+        return 'Selecione um produto válido da lista.';
+    }
+    if (campoVazio(tipo)) {
+        return 'Selecione o tipo de movimentação.';
+    }
+    if (numeroInvalido(quantidade)) {
+        return 'Quantidade deve ser maior que zero.';
+    }
+
+    document.getElementById('mov-codigoBarras').value = codigo;
+    return null;
+}
 
 /* ──────────────────────────────────────────
    Carregamento de Produtos
@@ -33,6 +118,8 @@ async function carregarProdutos() {
         const dados = await res.json();
         todosProdutos = dados;
 
+        atualizarListaProdutosMovimentacao(dados);
+
         if (!dados || dados.length === 0) {
             mostrarEstado('vazio');
             return;
@@ -46,6 +133,48 @@ async function carregarProdutos() {
         document.getElementById('mensagemErro').textContent = `Erro: ${err.message}`;
         mostrarEstado('erro');
     }
+}
+
+function atualizarListaProdutosMovimentacao(produtos) {
+    const datalist = document.getElementById('listaProdutosMovimentacao');
+    if (!datalist) return;
+
+    datalist.innerHTML = '';
+    (produtos || []).forEach(p => {
+        const porCodigo = document.createElement('option');
+        porCodigo.value = p.codigoBarras;
+
+        const porNome = document.createElement('option');
+        porNome.value = `${p.nomeProduto} (${p.codigoBarras})`;
+
+        datalist.appendChild(porCodigo);
+        datalist.appendChild(porNome);
+    });
+}
+
+function resolverCodigoBarrasMovimentacao(texto) {
+    if (!texto || !texto.trim()) return null;
+
+    const termo = texto.trim().toLowerCase();
+
+    const porCodigo = todosProdutos.find(p => p.codigoBarras.toLowerCase() === termo);
+    if (porCodigo) return porCodigo.codigoBarras;
+
+    const porLabel = todosProdutos.find(p =>
+        `${p.nomeProduto} (${p.codigoBarras})`.toLowerCase() === termo
+    );
+    if (porLabel) return porLabel.codigoBarras;
+
+    const porNomeExato = todosProdutos.find(p => p.nomeProduto.toLowerCase() === termo);
+    if (porNomeExato) return porNomeExato.codigoBarras;
+
+    const parciais = todosProdutos.filter(p =>
+        p.codigoBarras.toLowerCase().includes(termo) ||
+        p.nomeProduto.toLowerCase().includes(termo)
+    );
+    if (parciais.length === 1) return parciais[0].codigoBarras;
+
+    return null;
 }
 
 /* ──────────────────────────────────────────
@@ -64,6 +193,7 @@ function renderizarTabela(produtos) {
     }
 
     produtos.forEach(produto => {
+        const nivel = obterNivel(produto);
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><code style="font-size:0.8rem; color: var(--text-secondary);">${escapeHtml(produto.codigoBarras)}</code></td>
@@ -71,7 +201,7 @@ function renderizarTabela(produtos) {
             <td>${produto.quantidade}</td>
             <td>R$ ${parseFloat(produto.valor).toFixed(2)}</td>
             <td>R$ ${parseFloat(produto.total).toFixed(2)}</td>
-            <td><span class="badge badge-${produto.status.toLowerCase()}">${produto.status}</span></td>
+            <td><span class="badge badge-${classeBadgeNivel(nivel)}">${formatarNivel(nivel)}</span></td>
             <td>
                 <button class="btn-gerenciar" aria-label="Gerenciar ${escapeHtml(produto.nomeProduto)}">
                     ⚙ Gerenciar
@@ -79,7 +209,6 @@ function renderizarTabela(produtos) {
             </td>
         `;
 
-        // Associa o clique ao produto correto (sem usar onclick inline)
         tr.querySelector('.btn-gerenciar').addEventListener('click', () => abrirModal(produto));
         tbody.appendChild(tr);
     });
@@ -126,19 +255,94 @@ function inicializarSidebar() {
     const links = document.querySelectorAll('.sidebar-link');
     const secoes = document.querySelectorAll('.secao');
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.id.replace('secao-', '');
-                links.forEach(link => {
-                    const isAtivo = link.dataset.secao === id;
-                    link.classList.toggle('ativo-sidebar', isAtivo);
-                });
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            links.forEach(l => l.classList.remove('ativo-sidebar'));
+            link.classList.add('ativo-sidebar');
+        });
+    });
+
+    const marcarSecaoVisivel = () => {
+        const offset = 100;
+        let secaoAtiva = secoes[0];
+
+        secoes.forEach(secao => {
+            if (secao.getBoundingClientRect().top <= offset) {
+                secaoAtiva = secao;
             }
         });
-    }, { threshold: 0.4 });
 
-    secoes.forEach(secao => observer.observe(secao));
+        const id = secaoAtiva.id.replace('secao-', '');
+        links.forEach(link => {
+            link.classList.toggle('ativo-sidebar', link.dataset.secao === id);
+        });
+    };
+
+    window.addEventListener('scroll', marcarSecaoVisivel, { passive: true });
+    marcarSecaoVisivel();
+}
+
+/* ──────────────────────────────────────────
+   Movimentação de estoque
+────────────────────────────────────────── */
+function inicializarMovimentacao() {
+    const form = document.getElementById('formMovimentacao');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await registrarMovimentacao();
+    });
+
+    form.addEventListener('reset', () => {
+        ocultarFeedback('mov-feedback');
+        document.getElementById('mov-codigoBarras').value = '';
+    });
+}
+
+async function registrarMovimentacao() {
+    const btn = document.getElementById('btnRegistrarMov');
+    ocultarFeedback('mov-feedback');
+
+    const erroValidacao = validarFormularioMovimentacao();
+    if (erroValidacao) {
+        mostrarFeedback('mov-feedback', 'erro', erroValidacao);
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Registrando...';
+
+    const params = new URLSearchParams();
+    params.append('codigoBarras', document.getElementById('mov-codigoBarras').value);
+    params.append('tipo', document.getElementById('mov-tipo').value);
+    params.append('quantidade', document.getElementById('mov-quantidade').value);
+
+    try {
+        const res = await fetch('../api/movimentacao', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+        });
+
+        const dados = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(dados.erro || `Status ${res.status}`);
+        }
+
+        mostrarFeedback('mov-feedback', 'sucesso', '✓ Movimentação registrada com sucesso!');
+        document.getElementById('formMovimentacao').reset();
+        document.getElementById('mov-codigoBarras').value = '';
+        await carregarProdutos();
+
+    } catch (err) {
+        console.error('[gerenciamento.js] Erro ao registrar movimentação:', err);
+        mostrarFeedback('mov-feedback', 'erro', err.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Registrar';
+    }
 }
 
 /* ──────────────────────────────────────────
@@ -157,7 +361,6 @@ function inicializarCalculoTotal() {
         tot.value = (q * v).toFixed(2);
     };
 
-    qty.addEventListener('input', recalcular);
     val.addEventListener('input', recalcular);
 }
 
@@ -166,41 +369,38 @@ function inicializarCalculoTotal() {
 ────────────────────────────────────────── */
 function abrirModal(produto) {
     produtoAtual = produto;
+    const nivel = obterNivel(produto);
 
-    // Preencher header do modal
     document.getElementById('modalNomeProduto').textContent = produto.nomeProduto;
 
-    // Preencher aba Detalhes
-    document.getElementById('det-codigo').textContent        = produto.codigoBarras  || '—';
-    document.getElementById('det-fabricante').textContent    = produto.fabricante    || '—';
-    document.getElementById('det-marca').textContent         = produto.marca         || '—';
-    document.getElementById('det-quantidade').textContent    = produto.quantidade    ?? '—';
-    document.getElementById('det-valor').textContent         = `R$ ${parseFloat(produto.valor).toFixed(2)}`;
-    document.getElementById('det-total').textContent         = `R$ ${parseFloat(produto.total).toFixed(2)}`;
-    document.getElementById('det-dataFabricacao').textContent = formatarData(produto.dataFabricacao);
-    document.getElementById('det-dataVencimento').textContent = formatarData(produto.dataVencimento);
-    document.getElementById('det-status').innerHTML = `<span class="badge badge-${produto.status.toLowerCase()}">${produto.status}</span>`;
+    document.getElementById('det-codigo').textContent           = produto.codigoBarras  || '—';
+    document.getElementById('det-fabricante').textContent       = produto.fabricante    || '—';
+    document.getElementById('det-marca').textContent            = produto.marca         || '—';
+    document.getElementById('det-quantidade').textContent        = produto.quantidade    ?? '—';
+    document.getElementById('det-quantidadeMinima').textContent  = produto.quantidadeMinima ?? '—';
+    document.getElementById('det-valor').textContent              = `R$ ${parseFloat(produto.valor).toFixed(2)}`;
+    document.getElementById('det-total').textContent            = `R$ ${parseFloat(produto.total).toFixed(2)}`;
+    document.getElementById('det-dataFabricacao').textContent     = formatarData(produto.dataFabricacao);
+    document.getElementById('det-dataVencimento').textContent    = formatarData(produto.dataVencimento);
+    document.getElementById('det-status').innerHTML =
+        `<span class="badge badge-${classeBadgeNivel(nivel)}">${formatarNivel(nivel)}</span>`;
 
-    // Preencher aba Editar
-    document.getElementById('edit-codigoBarras').value    = produto.codigoBarras  || '';
-    document.getElementById('edit-nomeProduto').value     = produto.nomeProduto   || '';
-    document.getElementById('edit-fabricante').value      = produto.fabricante    || '';
-    document.getElementById('edit-marca').value           = produto.marca         || '';
-    document.getElementById('edit-quantidade').value      = produto.quantidade    ?? '';
-    document.getElementById('edit-valor').value           = parseFloat(produto.valor).toFixed(2);
-    document.getElementById('edit-total').value           = parseFloat(produto.total).toFixed(2);
-    document.getElementById('edit-dataFabricacao').value  = produto.dataFabricacao || '';
-    document.getElementById('edit-dataVencimento').value  = produto.dataVencimento || '';
-    document.getElementById('edit-status').value          = produto.status         || 'ENTRADA';
+    document.getElementById('edit-codigoBarras').value       = produto.codigoBarras  || '';
+    document.getElementById('edit-nomeProduto').value          = produto.nomeProduto   || '';
+    document.getElementById('edit-fabricante').value           = produto.fabricante    || '';
+    document.getElementById('edit-marca').value                = produto.marca         || '';
+    document.getElementById('edit-quantidade').value           = produto.quantidade    ?? '';
+    document.getElementById('edit-quantidadeMinima').value     = produto.quantidadeMinima ?? '';
+    document.getElementById('edit-valor').value                = parseFloat(produto.valor).toFixed(2);
+    document.getElementById('edit-total').value                = parseFloat(produto.total).toFixed(2);
+    document.getElementById('edit-dataFabricacao').value       = produto.dataFabricacao || '';
+    document.getElementById('edit-dataVencimento').value       = produto.dataVencimento || '';
 
-    // Preencher aba Excluir
     document.getElementById('excluir-nome').textContent = produto.nomeProduto;
 
-    // Limpar feedbacks anteriores
     ocultarFeedback('edit-feedback');
     ocultarFeedback('excluir-feedback');
 
-    // Mostrar modal na aba Detalhes
     mudarAba('detalhes');
     document.getElementById('modalOverlay').classList.add('ativo');
     document.body.style.overflow = 'hidden';
@@ -233,22 +433,27 @@ function mudarAba(aba) {
 async function salvarEdicao() {
     if (!produtoAtual) return;
 
+    ocultarFeedback('edit-feedback');
+
+    const erroValidacao = validarFormularioEdicao();
+    if (erroValidacao) {
+        mostrarFeedback('edit-feedback', 'erro', erroValidacao);
+        return;
+    }
+
     const btnSalvar = document.getElementById('btnSalvar');
     btnSalvar.disabled = true;
     btnSalvar.textContent = 'Salvando...';
-    ocultarFeedback('edit-feedback');
 
     const params = new URLSearchParams();
-    params.append('codigoBarras',    document.getElementById('edit-codigoBarras').value);
-    params.append('nomeProduto',     document.getElementById('edit-nomeProduto').value);
-    params.append('fabricante',      document.getElementById('edit-fabricante').value);
-    params.append('marca',           document.getElementById('edit-marca').value);
-    params.append('quantidade',      document.getElementById('edit-quantidade').value);
-    params.append('valor',           document.getElementById('edit-valor').value);
-    params.append('total',           document.getElementById('edit-total').value);
-    params.append('dataFabricacao',  document.getElementById('edit-dataFabricacao').value);
-    params.append('dataVencimento',  document.getElementById('edit-dataVencimento').value);
-    params.append('status',          document.getElementById('edit-status').value);
+    params.append('codigoBarras',       document.getElementById('edit-codigoBarras').value);
+    params.append('nomeProduto',        document.getElementById('edit-nomeProduto').value);
+    params.append('fabricante',         document.getElementById('edit-fabricante').value);
+    params.append('marca',              document.getElementById('edit-marca').value);
+    params.append('quantidadeMinima',   document.getElementById('edit-quantidadeMinima').value);
+    params.append('valor',              document.getElementById('edit-valor').value);
+    params.append('dataFabricacao',     document.getElementById('edit-dataFabricacao').value);
+    params.append('dataVencimento',     document.getElementById('edit-dataVencimento').value);
 
     try {
         const res = await fetch('../api/produtos/atualizar', {
@@ -257,11 +462,14 @@ async function salvarEdicao() {
             body: params.toString()
         });
 
-        if (!res.ok) throw new Error(`Status ${res.status}`);
+        const dados = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(dados.erro || `Status ${res.status}`);
+        }
 
         mostrarFeedback('edit-feedback', 'sucesso', '✓ Produto atualizado com sucesso!');
 
-        // Recarrega a lista e fecha após breve delay
         await carregarProdutos();
         setTimeout(fecharModal, 1200);
 
@@ -344,7 +552,6 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-// Expõe funções chamadas no HTML (abas e botões do modal)
 window.mudarAba          = mudarAba;
 window.fecharModal       = fecharModal;
 window.salvarEdicao      = salvarEdicao;

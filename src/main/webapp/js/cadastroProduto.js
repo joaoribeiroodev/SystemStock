@@ -29,4 +29,48 @@ function calcular() {
     let quantidade = parseInt(document.getElementById("quantidade").value) || 0;
 
     document.getElementById("total").value = (valor * quantidade).toFixed(2);
-};
+}
+
+function campoVazio(valor) {
+    return valor === null || valor === undefined || String(valor).trim() === "";
+}
+
+function numeroInvalido(valor) {
+    const n = Number(valor);
+    return Number.isNaN(n) || n <= 0;
+}
+
+document.getElementById("formCadastro").addEventListener("submit", function (e) {
+    const camposObrigatorios = [
+        "codigoBarras", "nomeProduto", "fabricante", "marca",
+        "dataFabricacao", "dataVencimento", "quantidade",
+        "quantidadeMinima", "valor", "status"
+    ];
+
+    for (const nome of camposObrigatorios) {
+        const el = this.elements[nome];
+        if (!el || campoVazio(el.value)) {
+            e.preventDefault();
+            alert("Preencha todos os campos obrigatórios.");
+            return;
+        }
+    }
+
+    if (numeroInvalido(this.elements.quantidade.value)) {
+        e.preventDefault();
+        alert("Quantidade deve ser maior que zero.");
+        return;
+    }
+
+    if (numeroInvalido(this.elements.quantidadeMinima.value)) {
+        e.preventDefault();
+        alert("Quantidade mínima de estoque deve ser maior que zero.");
+        return;
+    }
+
+    if (numeroInvalido(this.elements.valor.value)) {
+        e.preventDefault();
+        alert("Valor unitário deve ser maior que zero.");
+        return;
+    }
+});

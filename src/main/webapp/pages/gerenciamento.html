@@ -40,6 +40,10 @@
                 <span class="sidebar-icon">📦</span>
                 <span>Produtos</span>
             </a>
+            <a href="#secao-movimentacao" class="sidebar-link" data-secao="movimentacao">
+                <span class="sidebar-icon">🔄</span>
+                <span>Movimentação</span>
+            </a>
         </nav>
     </aside>
 
@@ -119,10 +123,10 @@
                         <tr>
                             <th>Código de Barras</th>
                             <th>Nome do Produto</th>
-                            <th>Qtd.</th>
+                            <th>Qtd. Em Estoque</th>
                             <th>Valor Unit.</th>
                             <th>Total</th>
-                            <th>Status</th>
+                            <th>Nível</th>
                             <th>Ações</th>
                         </tr>
                         </thead>
@@ -131,6 +135,50 @@
                     </table>
                 </div>
 
+            </div>
+        </section>
+
+        <!-- ===== SEÇÃO: MOVIMENTAÇÃO ===== -->
+        <section id="secao-movimentacao" class="secao">
+            <div class="card-glass">
+                <div class="card-header">
+                    <h2 class="card-titulo">Registrar Movimentação</h2>
+                </div>
+
+                <form id="formMovimentacao" class="form-movimentacao" novalidate>
+                    <div class="form-grid-mov">
+                        <div class="grupo-modal full">
+                            <label for="mov-produto">Produto</label>
+                            <input type="text" id="mov-produto" class="input-modal"
+                                   list="listaProdutosMovimentacao"
+                                   placeholder="Digite nome ou código de barras"
+                                   autocomplete="off" required>
+                            <datalist id="listaProdutosMovimentacao"></datalist>
+                            <input type="hidden" id="mov-codigoBarras">
+                        </div>
+
+                        <div class="grupo-modal">
+                            <label for="mov-tipo">Tipo</label>
+                            <select id="mov-tipo" class="input-modal" required>
+                                <option value="">Selecione</option>
+                                <option value="ENTRADA">Entrada</option>
+                                <option value="SAIDA">Saída</option>
+                            </select>
+                        </div>
+
+                        <div class="grupo-modal">
+                            <label for="mov-quantidade">Quantidade</label>
+                            <input type="number" id="mov-quantidade" class="input-modal" min="1" step="1" required>
+                        </div>
+                    </div>
+
+                    <div id="mov-feedback" class="feedback" style="display:none;"></div>
+
+                    <div class="modal-acoes mov-acoes">
+                        <button type="reset" class="btn-modal btn-secundario">Limpar</button>
+                        <button type="submit" class="btn-modal btn-primario" id="btnRegistrarMov">Registrar</button>
+                    </div>
+                </form>
             </div>
         </section>
 
@@ -196,8 +244,12 @@
                     <span class="detalhe-label">Data de Vencimento</span>
                     <span id="det-dataVencimento" class="detalhe-valor">—</span>
                 </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Quantidade Mínima</span>
+                    <span id="det-quantidadeMinima" class="detalhe-valor">—</span>
+                </div>
                 <div class="detalhe-item full">
-                    <span class="detalhe-label">Status</span>
+                    <span class="detalhe-label">Nível de Estoque</span>
                     <span id="det-status" class="detalhe-valor">—</span>
                 </div>
             </div>
@@ -222,16 +274,21 @@
                         <input type="text" id="edit-marca" class="input-modal">
                     </div>
                     <div class="grupo-modal">
-                        <label for="edit-quantidade">Quantidade</label>
-                        <input type="number" id="edit-quantidade" class="input-modal" min="0">
+                        <label for="edit-quantidade">Quantidade em estoque</label>
+                        <input type="number" id="edit-quantidade" class="input-modal" readonly
+                               title="Altere o estoque na aba Movimentação">
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-valor">Valor Unitário (R$)</label>
-                        <input type="number" id="edit-valor" class="input-modal" step="0.01" min="0">
+                        <input type="number" id="edit-valor" class="input-modal" step="0.01" min="0.01" required>
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-total">Total (R$)</label>
                         <input type="number" id="edit-total" class="input-modal" step="0.01" readonly>
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-quantidadeMinima">Quantidade Mínima de Estoque</label>
+                        <input type="number" id="edit-quantidadeMinima" class="input-modal" min="1" step="1" required>
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-dataFabricacao">Data de Fabricação</label>
@@ -239,14 +296,7 @@
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-dataVencimento">Data de Vencimento</label>
-                        <input type="date" id="edit-dataVencimento" class="input-modal">
-                    </div>
-                    <div class="grupo-modal full">
-                        <label for="edit-status">Status</label>
-                        <select id="edit-status" class="input-modal">
-                            <option value="ENTRADA">Entrada</option>
-                            <option value="SAIDA">Saída</option>
-                        </select>
+                        <input type="date" id="edit-dataVencimento" class="input-modal" required>
                     </div>
                 </div>
 

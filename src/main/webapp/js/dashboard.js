@@ -9,6 +9,7 @@ async function carregarEstoque() {
         tabela.innerHTML = "";
 
         dados.forEach(item => {
+            const nivel = item.nivel === 'BAIXO' ? 'Baixo' : 'Normal';
             const linha = `
                 <tr>
                     <td>${item.codigoBarras}</td>
@@ -20,7 +21,7 @@ async function carregarEstoque() {
                     <td>${item.quantidade}</td>
                     <td>${item.valor}</td>
                     <td>${item.total}</td>
-                    <td>${item.status}</td>
+                    <td>${nivel}</td>
                 </tr>`;
             tabela.innerHTML += linha;
         });
