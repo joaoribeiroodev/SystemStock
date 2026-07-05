@@ -42,6 +42,30 @@ public class CadastroProdutoDAO {
         }
     }
 
+    public String gerarCodigoBarrasUnico() {
+        for (long n = 1; n <= 99_999_999L; n++) {
+            String codigo = String.format("%08d", n);
+            ExistenciaCodigoBarras existencia = consultarExistenciaCodigoBarras(codigo);
+
+            if (existencia == ExistenciaCodigoBarras.DISPONIVEL) {
+                return codigo;
+            }
+
+            // Registros inativos (soft delete antigo) ainda ocupam UNIQUE — remove para reutilizar o código
+            if (existencia == ExistenciaCodigoBarras.JA_REGISTRADO_INATIVO) {
+                try {
+                    if (removerProdutoDefinitivamente(codigo)) {
+                        return codigo;
+                    }
+                } catch (SQLException e) {
+                    System.err.println("[CadastroProdutoDAO] Erro ao limpar produto inativo: " + e.getMessage());
+                }
+            }
+        }
+
+        return String.format("%08d", System.currentTimeMillis() % 100_000_000L);
+    }
+
     //   Salvar (INSERT)
 
     public boolean salvar(CadastroProdutoModel produto) {
@@ -152,38 +176,118 @@ public class CadastroProdutoDAO {
     }
 
 
-     //  Excluir por Código de Barras (DELETE)
+     //  Excluir por Código de Barras (remove produto e movimentações)
 
     public boolean excluirPorCodigo(String codigoBarras) throws SQLException {
-        String sql = "UPDATE produtos SET ativo = FALSE, atualizado_em = CURRENT_TIMESTAMP WHERE codigo_barras = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, codigoBarras);
-            int linhasAfetadas = stmt.executeUpdate();
-
-
-            return linhasAfetadas > 0;
+        if (codigoBarras == null || codigoBarras.isBlank()) {
+            return false;
         }
 
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            if (conn == null) {
+                return false;
+            }
+
+            conn.setAutoCommit(false);
+            try {
+                int produtoId = buscarIdPorCodigo(conn, codigoBarras.trim());
+                if (produtoId <= 0 || !produtoEstaAtivo(conn, produtoId)) {
+                    conn.rollback();
+                    return false;
+                }
+
+                boolean removido = removerProdutoDefinitivamentePorId(conn, produtoId);
+                if (removido) {
+                    conn.commit();
+                } else {
+                    conn.rollback();
+                }
+                return removido;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    private boolean removerProdutoDefinitivamente(String codigoBarras) throws SQLException {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            if (conn == null) {
+                return false;
+            }
+
+            conn.setAutoCommit(false);
+            try {
+                int produtoId = buscarIdPorCodigo(conn, codigoBarras.trim());
+                if (produtoId <= 0) {
+                    conn.rollback();
+                    return false;
+                }
+
+                boolean removido = removerProdutoDefinitivamentePorId(conn, produtoId);
+                if (removido) {
+                    conn.commit();
+                } else {
+                    conn.rollback();
+                }
+                return removido;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    private boolean removerProdutoDefinitivamentePorId(Connection conn, int produtoId) throws SQLException {
+        try (PreparedStatement psMov = conn.prepareStatement("DELETE FROM movimentacoes WHERE produto_id = ?")) {
+            psMov.setInt(1, produtoId);
+            psMov.executeUpdate();
+        }
+
+        try (PreparedStatement psProd = conn.prepareStatement("DELETE FROM produtos WHERE id = ?")) {
+            psProd.setInt(1, produtoId);
+            return psProd.executeUpdate() > 0;
+        }
+    }
+
+    private boolean produtoEstaAtivo(Connection conn, int produtoId) throws SQLException {
+        String sql = "SELECT ativo FROM produtos WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, produtoId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getBoolean("ativo");
+            }
+        }
     }
 
 
     public int buscarIdPorCodigo(String codigoBarras) {
-        String sql = "SELECT id FROM produtos WHERE codigo_barras = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, codigoBarras);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt("id");
-            }
-
-        } catch (Exception e) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            return buscarIdPorCodigo(conn, codigoBarras);
+        } catch (SQLException e) {
             System.err.println("[CadastroProdutoDAO] Erro ao buscar ID por código: " + e.getMessage());
             e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private int buscarIdPorCodigo(Connection conn, String codigoBarras) throws SQLException {
+        if (codigoBarras == null || codigoBarras.isBlank()) {
+            return 0;
+        }
+
+        String sql = "SELECT id FROM produtos WHERE codigo_barras = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, codigoBarras.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
         }
 
         return 0;

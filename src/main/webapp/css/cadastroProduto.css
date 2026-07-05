@@ -123,3 +123,9 @@ main { padding: 4rem 5%; display: flex; justify-content: center; }
 }
 
 .btn-cancelar:hover { color: var(--text-primary); }
+
+.info-codigo {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}

@@ -32,15 +32,11 @@
     <aside class="sidebar">
         <p class="sidebar-titulo">Seções</p>
         <nav class="sidebar-nav">
-            <a href="#secao-grafico" class="sidebar-link ativo-sidebar" data-secao="grafico">
-                <span class="sidebar-icon">📊</span>
-                <span>Gráfico</span>
-            </a>
-            <a href="#secao-produtos" class="sidebar-link" data-secao="produtos">
+            <a href="#secao-produtos" class="sidebar-link ativo-sidebar" data-secao="produtos">
                 <span class="sidebar-icon">📦</span>
                 <span>Produtos</span>
             </a>
-            <a href="#secao-movimentacao" class="sidebar-link" data-secao="movimentacao">
+            <a href="#" class="sidebar-link" id="sidebarAbrirMovimentacao">
                 <span class="sidebar-icon">🔄</span>
                 <span>Movimentação</span>
             </a>
@@ -49,32 +45,6 @@
 
     <!-- Conteúdo Principal -->
     <main class="conteudo-principal">
-
-        <!-- ===== SEÇÃO: GRÁFICO ===== -->
-        <section id="secao-grafico" class="secao">
-            <div class="card-glass">
-                <div class="card-header">
-                    <h2 class="card-titulo">Movimentações de Estoque</h2>
-                </div>
-                <div class="grafico-filtros">
-                    <span class="grafico-filtros-label">Produto</span>
-                    <div class="grafico-filtros-row">
-                        <input type="text" id="buscaProdutoGrafico" class="grafico-filtros-input"
-                               list="listaProdutosGrafico"
-                               placeholder="Digite nome ou código de barras"
-                               autocomplete="off"
-                               aria-describedby="graficoFiltroHint">
-                        <datalist id="listaProdutosGrafico"></datalist>
-                        <button type="button" id="btnGraficoAplicarProduto" class="btn-grafico-filtro">Aplicar</button>
-                        <button type="button" id="btnGraficoLimparProduto" class="btn-grafico-filtro btn-grafico-filtro-sec" title="Mostrar todas as movimentações">Todos os produtos</button>
-                    </div>
-                    <p class="grafico-filtro-hint" id="graficoFiltroHint" role="status"></p>
-                </div>
-                <div class="grafico-wrapper">
-                    <canvas id="graficoGerenciamento"></canvas>
-                </div>
-            </div>
-        </section>
 
         <!-- ===== SEÇÃO: PRODUTOS ===== -->
         <section id="secao-produtos" class="secao">
@@ -90,9 +60,14 @@
                             </svg>
                             <input type="text" id="buscaProduto" class="input-busca" placeholder="Buscar produto...">
                         </div>
-                        <a href="cadastroProduto.html" class="btn-novo">
-                            <span>+</span> Novo Produto
-                        </a>
+                        <div class="toolbar-acoes">
+                            <a href="cadastroProduto.html" class="btn-novo">
+                                <span>+</span> Novo Produto
+                            </a>
+                            <button type="button" class="btn-movimentacao" id="btnAbrirMovimentacao">
+                                Registrar Movimentação
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -138,51 +113,59 @@
             </div>
         </section>
 
-        <!-- ===== SEÇÃO: MOVIMENTAÇÃO ===== -->
-        <section id="secao-movimentacao" class="secao">
-            <div class="card-glass">
-                <div class="card-header">
-                    <h2 class="card-titulo">Registrar Movimentação</h2>
+    </main>
+</div>
+
+<!-- ===== MODAL: MOVIMENTAÇÃO ===== -->
+<div id="modalMovimentacaoOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalMovimentacaoTitulo">
+    <div class="modal modal-movimentacao">
+        <div class="modal-header">
+            <div>
+                <p class="modal-subtitulo">Estoque</p>
+                <h3 id="modalMovimentacaoTitulo" class="modal-titulo">Registrar Movimentação</h3>
+            </div>
+            <button type="button" class="btn-fechar-modal" onclick="fecharModalMovimentacao()" aria-label="Fechar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <form id="formMovimentacao" class="form-movimentacao-modal" novalidate>
+            <div class="form-grid-mov">
+                <div class="grupo-modal full">
+                    <label for="mov-produto">Produto</label>
+                    <input type="text" id="mov-produto" class="input-modal"
+                           list="listaProdutosMovimentacao"
+                           placeholder="Digite nome ou código de barras"
+                           autocomplete="off" required>
+                    <datalist id="listaProdutosMovimentacao"></datalist>
+                    <input type="hidden" id="mov-codigoBarras">
                 </div>
 
-                <form id="formMovimentacao" class="form-movimentacao" novalidate>
-                    <div class="form-grid-mov">
-                        <div class="grupo-modal full">
-                            <label for="mov-produto">Produto</label>
-                            <input type="text" id="mov-produto" class="input-modal"
-                                   list="listaProdutosMovimentacao"
-                                   placeholder="Digite nome ou código de barras"
-                                   autocomplete="off" required>
-                            <datalist id="listaProdutosMovimentacao"></datalist>
-                            <input type="hidden" id="mov-codigoBarras">
-                        </div>
+                <div class="grupo-modal">
+                    <label for="mov-tipo">Tipo</label>
+                    <select id="mov-tipo" class="input-modal" required>
+                        <option value="">Selecione</option>
+                        <option value="ENTRADA">Entrada</option>
+                        <option value="SAIDA">Saída</option>
+                    </select>
+                </div>
 
-                        <div class="grupo-modal">
-                            <label for="mov-tipo">Tipo</label>
-                            <select id="mov-tipo" class="input-modal" required>
-                                <option value="">Selecione</option>
-                                <option value="ENTRADA">Entrada</option>
-                                <option value="SAIDA">Saída</option>
-                            </select>
-                        </div>
-
-                        <div class="grupo-modal">
-                            <label for="mov-quantidade">Quantidade</label>
-                            <input type="number" id="mov-quantidade" class="input-modal" min="1" step="1" required>
-                        </div>
-                    </div>
-
-                    <div id="mov-feedback" class="feedback" style="display:none;"></div>
-
-                    <div class="modal-acoes mov-acoes">
-                        <button type="reset" class="btn-modal btn-secundario">Limpar</button>
-                        <button type="submit" class="btn-modal btn-primario" id="btnRegistrarMov">Registrar</button>
-                    </div>
-                </form>
+                <div class="grupo-modal">
+                    <label for="mov-quantidade">Quantidade</label>
+                    <input type="number" id="mov-quantidade" class="input-modal" min="1" step="1" required>
+                </div>
             </div>
-        </section>
 
-    </main>
+            <div id="mov-feedback" class="feedback" style="display:none;"></div>
+
+            <div class="modal-acoes">
+                <button type="button" onclick="fecharModalMovimentacao()" class="btn-modal btn-secundario">Cancelar</button>
+                <button type="submit" class="btn-modal btn-primario" id="btnRegistrarMov">Registrar</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- ===== MODAL DE CRUD ===== -->
@@ -263,20 +246,20 @@
                 <div class="form-grid">
                     <div class="grupo-modal">
                         <label for="edit-nomeProduto">Nome do Produto</label>
-                        <input type="text" id="edit-nomeProduto" class="input-modal">
+                        <input type="text" id="edit-nomeProduto" class="input-modal" required>
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-fabricante">Fabricante</label>
-                        <input type="text" id="edit-fabricante" class="input-modal">
+                        <input type="text" id="edit-fabricante" class="input-modal" required>
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-marca">Marca</label>
-                        <input type="text" id="edit-marca" class="input-modal">
+                        <input type="text" id="edit-marca" class="input-modal" required>
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-quantidade">Quantidade em estoque</label>
                         <input type="number" id="edit-quantidade" class="input-modal" readonly
-                               title="Altere o estoque na aba Movimentação">
+                               title="Use Registrar Movimentação para alterar o estoque">
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-valor">Valor Unitário (R$)</label>
@@ -292,7 +275,7 @@
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-dataFabricacao">Data de Fabricação</label>
-                        <input type="date" id="edit-dataFabricacao" class="input-modal">
+                        <input type="date" id="edit-dataFabricacao" class="input-modal" required>
                     </div>
                     <div class="grupo-modal">
                         <label for="edit-dataVencimento">Data de Vencimento</label>
@@ -318,10 +301,14 @@
                     Você está prestes a excluir o produto <strong id="excluir-nome">—</strong>.
                     Essa ação não pode ser desfeita e também removerá o histórico de movimentações associado.
                 </p>
+                <label class="excluir-confirmacao">
+                    <input type="checkbox" id="excluir-confirmar" onchange="atualizarBotaoExcluir()">
+                    <span>Confirmo que desejo excluir este produto permanentemente</span>
+                </label>
                 <div id="excluir-feedback" class="feedback" style="display:none;"></div>
                 <div class="modal-acoes">
                     <button onclick="fecharModal()" class="btn-modal btn-secundario">Cancelar</button>
-                    <button onclick="confirmarExclusao()" class="btn-modal btn-perigo" id="btnExcluir">Excluir Produto</button>
+                    <button onclick="confirmarExclusao()" class="btn-modal btn-perigo" id="btnExcluir" disabled>Excluir Produto</button>
                 </div>
             </div>
         </div>
@@ -330,8 +317,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="../js/grafico.js"></script>
 <script src="../js/gerenciamento.js"></script>
 <script src="../js/logout.js"></script>
 

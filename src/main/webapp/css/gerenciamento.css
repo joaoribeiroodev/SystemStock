@@ -375,6 +375,33 @@ body {
     box-shadow: 0 4px 20px rgba(79, 172, 254, 0.35);
 }
 
+.toolbar-acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-movimentacao {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+}
+
+.btn-movimentacao:hover {
+    background: rgba(79, 172, 254, 0.1);
+    border-color: rgba(79, 172, 254, 0.3);
+    color: #4facfe;
+    transform: translateY(-1px);
+}
+
 /* ===== ESTADOS (carregando / vazio / erro) ===== */
 .estado-vazio {
     display: flex;
@@ -482,9 +509,13 @@ body {
     border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-/* Formulário de movimentação */
-.form-movimentacao {
-    padding: 1.5rem 1.75rem 1.75rem;
+/* Formulário de movimentação (modal) */
+.form-movimentacao-modal {
+    padding: 0 1.75rem 1.75rem;
+}
+
+.modal-movimentacao {
+    max-width: 480px;
 }
 
 .form-grid-mov {
@@ -492,10 +523,6 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1rem;
-}
-
-.mov-acoes {
-    padding-top: 0.5rem;
 }
 
 /* Botão de gerenciar individual */
@@ -859,6 +886,25 @@ select.input-modal option {
 
 .excluir-descricao strong {
     color: var(--text-primary);
+}
+
+.excluir-confirmacao {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    max-width: 400px;
+    margin: 0 auto 1.25rem;
+    text-align: left;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.excluir-confirmacao input[type="checkbox"] {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+    accent-color: #ef4444;
+    cursor: pointer;
 }
 
 /* Botão desabilitado */

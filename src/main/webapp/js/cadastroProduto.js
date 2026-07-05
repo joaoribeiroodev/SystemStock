@@ -1,33 +1,48 @@
-(function exibirErroCadastroSeHouver() {
-    var params = new URLSearchParams(window.location.search);
-    var codigo = params.get("erro");
-    var mensagens = {
-        codigo_duplicado_ativo:
-            "Já existe um produto ativo com este código de barras. Use outro código ou edite o produto existente no gerenciamento.",
-        codigo_duplicado_inativo:
-            "Este código de barras já foi usado em um produto inativo (excluído). O sistema não permite reutilizar o mesmo código. Reative o produto antigo no banco ou cadastre com um código diferente.",
-        cadastro_falhou:
-            "Não foi possível salvar o produto. Verifique os dados, a conexão com o banco e tente novamente."
-    };
-    if (!codigo || !mensagens[codigo]) {
-        return;
-    }
-    var banner = document.getElementById("banner-erro-cadastro");
-    if (banner) {
-        banner.textContent = mensagens[codigo];
-        banner.classList.remove("oculto");
-    }
-    var path = window.location.pathname;
-    window.history.replaceState(null, "", path);
-})();
+function dataLocalISO(date) {
+    var d = date || new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var dia = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + dia;
+}
 
-document.getElementById("valor").addEventListener("input", calcular);
-document.getElementById("quantidade").addEventListener("input", calcular);
+function hojeISO() {
+    return dataLocalISO(new Date());
+}
+
+function amanhaISO() {
+    var d = new Date();
+    d.setDate(d.getDate() + 1);
+    return dataLocalISO(d);
+}
+
+function configurarLimitesData() {
+    var fab = document.getElementById("dataFabricacao");
+    var ven = document.getElementById("dataVencimento");
+    if (fab) fab.max = hojeISO();
+    if (ven) ven.min = amanhaISO();
+}
+
+function preencherCodigoBarras() {
+    var el = document.getElementById("codigoBarras");
+    if (!el) return;
+
+    fetch("../cadastroProdutos")
+        .then(function (res) {
+            if (!res.ok) throw new Error("falha");
+            return res.json();
+        })
+        .then(function (data) {
+            el.value = data.codigoBarras;
+        })
+        .catch(function () {
+            el.value = "00000001";
+        });
+}
 
 function calcular() {
     let valor = parseFloat(document.getElementById("valor").value) || 0;
     let quantidade = parseInt(document.getElementById("quantidade").value) || 0;
-
     document.getElementById("total").value = (valor * quantidade).toFixed(2);
 }
 
@@ -40,11 +55,56 @@ function numeroInvalido(valor) {
     return Number.isNaN(n) || n <= 0;
 }
 
+function validarDatas(dataFabricacao, dataVencimento) {
+    const hoje = hojeISO();
+
+    if (dataFabricacao > hoje) {
+        return "Data de fabricação não pode ser posterior à data atual.";
+    }
+    if (dataVencimento <= hoje) {
+        return "Data de vencimento deve ser posterior à data atual.";
+    }
+    if (dataVencimento < dataFabricacao) {
+        return "Data de vencimento não pode ser anterior à data de fabricação.";
+    }
+    return null;
+}
+
+function exibirErroCadastroSeHouver() {
+    var params = new URLSearchParams(window.location.search);
+    var codigo = params.get("erro");
+    var mensagens = {
+        codigo_duplicado_ativo:
+            "Já existe um produto ativo com este código de barras. Tente salvar novamente.",
+        codigo_duplicado_inativo:
+            "Falha ao gerar código de barras único. Tente salvar novamente.",
+        cadastro_falhou:
+            "Não foi possível salvar o produto. Verifique os dados e tente novamente."
+    };
+    if (!codigo || !mensagens[codigo]) {
+        return;
+    }
+    var banner = document.getElementById("banner-erro-cadastro");
+    if (banner) {
+        banner.textContent = mensagens[codigo];
+        banner.classList.remove("oculto");
+    }
+    preencherCodigoBarras();
+    window.history.replaceState(null, "", window.location.pathname);
+}
+
+configurarLimitesData();
+preencherCodigoBarras();
+exibirErroCadastroSeHouver();
+
+document.getElementById("valor").addEventListener("input", calcular);
+document.getElementById("quantidade").addEventListener("input", calcular);
+
 document.getElementById("formCadastro").addEventListener("submit", function (e) {
     const camposObrigatorios = [
         "codigoBarras", "nomeProduto", "fabricante", "marca",
         "dataFabricacao", "dataVencimento", "quantidade",
-        "quantidadeMinima", "valor", "status"
+        "quantidadeMinima", "valor"
     ];
 
     for (const nome of camposObrigatorios) {
@@ -72,5 +132,14 @@ document.getElementById("formCadastro").addEventListener("submit", function (e) 
         e.preventDefault();
         alert("Valor unitário deve ser maior que zero.");
         return;
+    }
+
+    const erroData = validarDatas(
+        this.elements.dataFabricacao.value,
+        this.elements.dataVencimento.value
+    );
+    if (erroData) {
+        e.preventDefault();
+        alert(erroData);
     }
 });

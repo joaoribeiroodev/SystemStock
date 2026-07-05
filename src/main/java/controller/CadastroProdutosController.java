@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import model.CadastroProdutoModel;
+import util.ValidacaoProduto;
 
 @WebServlet("/cadastroProdutos")
 public class CadastroProdutosController extends HttpServlet {
@@ -19,10 +20,19 @@ public class CadastroProdutosController extends HttpServlet {
         return request.getContextPath() + "/pages/cadastroProduto.html?erro=" + codigoErro;
     }
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        String codigo = new CadastroProdutoDAO().gerarCodigoBarrasUnico();
+        response.getWriter().write("{\"codigoBarras\":\"" + codigo + "\"}");
+    }
+
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String codigoBarras = request.getParameter("codigoBarras");
         String nomeProduto = request.getParameter("nomeProduto");
         String fabricante = request.getParameter("fabricante");
         String marca = request.getParameter("marca");
@@ -31,34 +41,43 @@ public class CadastroProdutosController extends HttpServlet {
         String qtdStr = request.getParameter("quantidade");
         String qtdMinStr = request.getParameter("quantidadeMinima");
         String valorStr = request.getParameter("valor");
-        String status = request.getParameter("status");
 
-        if (isBlank(codigoBarras) || isBlank(nomeProduto) || isBlank(fabricante) || isBlank(marca)
-                || isBlank(dataFabricacao) || isBlank(dataVencimento)
-                || isBlank(qtdStr) || isBlank(qtdMinStr) || isBlank(valorStr) || isBlank(status)) {
+        if (ValidacaoProduto.isBlank(nomeProduto) || ValidacaoProduto.isBlank(fabricante)
+                || ValidacaoProduto.isBlank(marca) || ValidacaoProduto.isBlank(dataFabricacao)
+                || ValidacaoProduto.isBlank(dataVencimento) || ValidacaoProduto.isBlank(qtdStr)
+                || ValidacaoProduto.isBlank(qtdMinStr) || ValidacaoProduto.isBlank(valorStr)) {
             response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
             return;
         }
 
-        long quantidade;
-        long quantidadeMinima;
-        BigDecimal valor;
-        try {
-            quantidade = Long.parseLong(qtdStr.trim());
-            quantidadeMinima = Long.parseLong(qtdMinStr.trim());
-            valor = new BigDecimal(valorStr.trim());
-            if (quantidade <= 0 || quantidadeMinima <= 0 || valor.compareTo(BigDecimal.ZERO) <= 0) {
-                response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
-                return;
-            }
-        } catch (NumberFormatException e) {
+        String erroData = ValidacaoProduto.validarDatas(dataFabricacao, dataVencimento);
+        if (erroData != null) {
             response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
             return;
+        }
+
+        Long quantidade = ValidacaoProduto.parseLongPositivo(qtdStr);
+        Long quantidadeMinima = ValidacaoProduto.parseLongPositivo(qtdMinStr);
+        BigDecimal valor = ValidacaoProduto.parseValorPositivo(valorStr);
+
+        if (quantidade == null || quantidadeMinima == null || valor == null) {
+            response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
+            return;
+        }
+
+        CadastroProdutoDAO dao = new CadastroProdutoDAO();
+        MovimentacaoDAO movDAO = new MovimentacaoDAO();
+
+        String codigoBarras = request.getParameter("codigoBarras");
+        if (ValidacaoProduto.isBlank(codigoBarras)
+                || dao.consultarExistenciaCodigoBarras(codigoBarras.trim()) != ExistenciaCodigoBarras.DISPONIVEL) {
+            codigoBarras = dao.gerarCodigoBarrasUnico();
+        } else {
+            codigoBarras = codigoBarras.trim();
         }
 
         CadastroProdutoModel produto = new CadastroProdutoModel();
-
-        produto.setCodigoBarras(codigoBarras.trim());
+        produto.setCodigoBarras(codigoBarras);
         produto.setNomeProduto(nomeProduto.trim());
         produto.setFabricante(fabricante.trim());
         produto.setMarca(marca.trim());
@@ -68,20 +87,7 @@ public class CadastroProdutosController extends HttpServlet {
         produto.setQuantidadeMinima(quantidadeMinima);
         produto.setValor(valor.toPlainString());
         produto.setTotal(valor.multiply(BigDecimal.valueOf(quantidade)).toPlainString());
-        produto.setStatus(status);
-
-        CadastroProdutoDAO dao    = new CadastroProdutoDAO();
-        MovimentacaoDAO    movDAO = new MovimentacaoDAO();
-
-        ExistenciaCodigoBarras existencia = dao.consultarExistenciaCodigoBarras(produto.getCodigoBarras());
-        if (existencia == ExistenciaCodigoBarras.JA_REGISTRADO_ATIVO) {
-            response.sendRedirect(redirectErroCadastro(request, "codigo_duplicado_ativo"));
-            return;
-        }
-        if (existencia == ExistenciaCodigoBarras.JA_REGISTRADO_INATIVO) {
-            response.sendRedirect(redirectErroCadastro(request, "codigo_duplicado_inativo"));
-            return;
-        }
+        produto.setStatus("ENTRADA");
 
         if (dao.salvar(produto)) {
 
@@ -100,9 +106,5 @@ public class CadastroProdutosController extends HttpServlet {
         } else {
             response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));
         }
-    }
-
-    private static boolean isBlank(String value) {
-        return value == null || value.isBlank();
     }
 }

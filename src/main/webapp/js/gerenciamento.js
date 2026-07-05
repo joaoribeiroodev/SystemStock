@@ -11,11 +11,13 @@ let todosProdutos = [];
    Inicialização
 ────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+    configurarLimitesDataEdicao();
     carregarProdutos();
     inicializarBusca();
     inicializarSidebar();
     inicializarCalculoTotal();
     inicializarMovimentacao();
+    inicializarModalMovimentacao();
     fecharModalAoClicarFora();
 });
 
@@ -55,6 +57,46 @@ function numeroInvalido(valor) {
     return Number.isNaN(n) || n <= 0;
 }
 
+function dataLocalISO(date) {
+    const d = date || new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dia}`;
+}
+
+function hojeISO() {
+    return dataLocalISO(new Date());
+}
+
+function amanhaISO() {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return dataLocalISO(d);
+}
+
+function configurarLimitesDataEdicao() {
+    const fab = document.getElementById('edit-dataFabricacao');
+    const ven = document.getElementById('edit-dataVencimento');
+    if (fab) fab.max = hojeISO();
+    if (ven) ven.min = amanhaISO();
+}
+
+function validarDatas(dataFabricacao, dataVencimento) {
+    const hoje = hojeISO();
+
+    if (dataFabricacao > hoje) {
+        return 'Data de fabricação não pode ser posterior à data atual.';
+    }
+    if (dataVencimento <= hoje) {
+        return 'Data de vencimento deve ser posterior à data atual.';
+    }
+    if (dataVencimento < dataFabricacao) {
+        return 'Data de vencimento não pode ser anterior à data de fabricação.';
+    }
+    return null;
+}
+
 function validarFormularioEdicao() {
     const camposTexto = [
         { id: 'edit-nomeProduto', nome: 'Nome do Produto' },
@@ -80,6 +122,12 @@ function validarFormularioEdicao() {
     if (numeroInvalido(valor)) {
         return 'Valor unitário deve ser maior que zero.';
     }
+
+    const erroData = validarDatas(
+        document.getElementById('edit-dataFabricacao').value,
+        document.getElementById('edit-dataVencimento').value
+    );
+    if (erroData) return erroData;
 
     return null;
 }
@@ -283,8 +331,55 @@ function inicializarSidebar() {
 }
 
 /* ──────────────────────────────────────────
-   Movimentação de estoque
+   Modal de movimentação
 ────────────────────────────────────────── */
+function abrirModalMovimentacao(produto) {
+    fecharModal();
+
+    const form = document.getElementById('formMovimentacao');
+    if (form) form.reset();
+
+    document.getElementById('mov-codigoBarras').value = '';
+    ocultarFeedback('mov-feedback');
+
+    if (produto) {
+        document.getElementById('mov-produto').value =
+            `${produto.nomeProduto} (${produto.codigoBarras})`;
+        document.getElementById('mov-codigoBarras').value = produto.codigoBarras;
+    }
+
+    document.getElementById('modalMovimentacaoOverlay').classList.add('ativo');
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => {
+        const input = document.getElementById('mov-produto');
+        if (input) input.focus();
+    }, 100);
+}
+
+function fecharModalMovimentacao() {
+    document.getElementById('modalMovimentacaoOverlay').classList.remove('ativo');
+    document.body.style.overflow = '';
+}
+
+function inicializarModalMovimentacao() {
+    const btnToolbar = document.getElementById('btnAbrirMovimentacao');
+    const btnSidebar = document.getElementById('sidebarAbrirMovimentacao');
+
+    if (btnToolbar) {
+        btnToolbar.addEventListener('click', () => abrirModalMovimentacao());
+    }
+
+    if (btnSidebar) {
+        btnSidebar.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('ativo-sidebar'));
+            btnSidebar.classList.add('ativo-sidebar');
+            abrirModalMovimentacao();
+        });
+    }
+}
+
 function inicializarMovimentacao() {
     const form = document.getElementById('formMovimentacao');
     if (!form) return;
@@ -292,11 +387,6 @@ function inicializarMovimentacao() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         await registrarMovimentacao();
-    });
-
-    form.addEventListener('reset', () => {
-        ocultarFeedback('mov-feedback');
-        document.getElementById('mov-codigoBarras').value = '';
     });
 }
 
@@ -332,9 +422,8 @@ async function registrarMovimentacao() {
         }
 
         mostrarFeedback('mov-feedback', 'sucesso', '✓ Movimentação registrada com sucesso!');
-        document.getElementById('formMovimentacao').reset();
-        document.getElementById('mov-codigoBarras').value = '';
         await carregarProdutos();
+        setTimeout(fecharModalMovimentacao, 1200);
 
     } catch (err) {
         console.error('[gerenciamento.js] Erro ao registrar movimentação:', err);
@@ -368,6 +457,7 @@ function inicializarCalculoTotal() {
    Modal: Abrir / Fechar / Abas
 ────────────────────────────────────────── */
 function abrirModal(produto) {
+    fecharModalMovimentacao();
     produtoAtual = produto;
     const nivel = obterNivel(produto);
 
@@ -395,8 +485,10 @@ function abrirModal(produto) {
     document.getElementById('edit-total').value                = parseFloat(produto.total).toFixed(2);
     document.getElementById('edit-dataFabricacao').value       = produto.dataFabricacao || '';
     document.getElementById('edit-dataVencimento').value       = produto.dataVencimento || '';
+    configurarLimitesDataEdicao();
 
     document.getElementById('excluir-nome').textContent = produto.nomeProduto;
+    resetConfirmacaoExclusao();
 
     ocultarFeedback('edit-feedback');
     ocultarFeedback('excluir-feedback');
@@ -418,6 +510,12 @@ function fecharModalAoClicarFora() {
             fecharModal();
         }
     });
+
+    document.getElementById('modalMovimentacaoOverlay').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('modalMovimentacaoOverlay')) {
+            fecharModalMovimentacao();
+        }
+    });
 }
 
 function mudarAba(aba) {
@@ -425,6 +523,8 @@ function mudarAba(aba) {
     document.querySelectorAll('.btn-aba').forEach(el => el.classList.remove('ativo'));
     document.getElementById(`aba-${aba}`).classList.add('ativo');
     document.querySelector(`[data-aba="${aba}"]`).classList.add('ativo');
+
+    if (aba === 'excluir') resetConfirmacaoExclusao();
 }
 
 /* ──────────────────────────────────────────
@@ -485,8 +585,34 @@ async function salvarEdicao() {
 /* ──────────────────────────────────────────
    CRUD: Confirmar Exclusão
 ────────────────────────────────────────── */
+function resetConfirmacaoExclusao() {
+    const checkbox = document.getElementById('excluir-confirmar');
+    const btnExcluir = document.getElementById('btnExcluir');
+    if (checkbox) checkbox.checked = false;
+    if (btnExcluir) {
+        btnExcluir.disabled = true;
+        btnExcluir.textContent = 'Excluir Produto';
+    }
+}
+
+function atualizarBotaoExcluir() {
+    const checkbox = document.getElementById('excluir-confirmar');
+    const btnExcluir = document.getElementById('btnExcluir');
+    if (checkbox && btnExcluir) {
+        btnExcluir.disabled = !checkbox.checked;
+    }
+}
+
 async function confirmarExclusao() {
     if (!produtoAtual) return;
+
+    const checkbox = document.getElementById('excluir-confirmar');
+    if (!checkbox?.checked) return;
+
+    const nome = produtoAtual.nomeProduto || 'este produto';
+    if (!confirm(`Tem certeza que deseja excluir "${nome}"?\n\nEsta ação não pode ser desfeita.`)) {
+        return;
+    }
 
     const btnExcluir = document.getElementById('btnExcluir');
     btnExcluir.disabled = true;
@@ -511,7 +637,7 @@ async function confirmarExclusao() {
         console.error('[gerenciamento.js] Erro ao excluir produto:', err);
         mostrarFeedback('excluir-feedback', 'erro', `Erro ao excluir: ${err.message}`);
     } finally {
-        btnExcluir.disabled = false;
+        atualizarBotaoExcluir();
         btnExcluir.textContent = 'Excluir Produto';
     }
 }
@@ -552,8 +678,10 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-window.mudarAba          = mudarAba;
-window.fecharModal       = fecharModal;
-window.salvarEdicao      = salvarEdicao;
-window.confirmarExclusao = confirmarExclusao;
-window.carregarProdutos  = carregarProdutos;
+window.mudarAba                = mudarAba;
+window.fecharModal             = fecharModal;
+window.fecharModalMovimentacao = fecharModalMovimentacao;
+window.salvarEdicao            = salvarEdicao;
+window.confirmarExclusao       = confirmarExclusao;
+window.atualizarBotaoExcluir   = atualizarBotaoExcluir;
+window.carregarProdutos        = carregarProdutos;

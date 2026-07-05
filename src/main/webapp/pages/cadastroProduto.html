@@ -25,68 +25,57 @@
         <section id="form-container">
             <div id="banner-erro-cadastro" class="banner-erro-cadastro oculto" role="alert" aria-live="polite"></div>
             <form action="../cadastroProdutos" method="POST" id="formCadastro">
-                
+
                 <div class="grupo-form">
                     <label for="codigoBarras">Código de Barras</label>
-                    <input type="text" name="codigoBarras" required />
+                    <input type="text" name="codigoBarras" id="codigoBarras" readonly required />
                 </div>
 
                 <div class="grupo-form">
                     <label for="nomeProduto">Nome do Produto</label>
-                    <input type="text" name="nomeProduto" required />
+                    <input type="text" name="nomeProduto" id="nomeProduto" required />
                 </div>
 
                 <div class="grupo-form">
                     <label class="fabricante" for="fabricante">Fabricante</label>
-                    <input type="text" name="fabricante" required />
+                    <input type="text" name="fabricante" id="fabricante" required />
                 </div>
-                
 
                 <div class="grupo-form">
-                    <label for="nomeProduto">Marca</label>
-                    <input type="text" name="marca" required />
+                    <label for="marca">Marca</label>
+                    <input type="text" name="marca" id="marca" required />
                 </div>
-                
-                    <div class="grupo-form">
-                        <label class="dataFabricacao" for="dataFabricacao">Data de Fabricação</label>
-                        <input type="date" name="dataFabricacao" required />
-                    </div>
 
-                    <div class="grupo-form">
-                        <label class="dataVencimento" for="dataVencimento">Data de Vencimento</label>
-                        <input type="date" name="dataVencimento" required />
-                    </div>
-                
-                
-                    <div class="grupo-form">
-                        <label for="quantidade">Quantidade</label>
-                        <input type="number" name="quantidade" id="quantidade" min="1" step="1" required />
-                    </div>
-
-                    <div class="grupo-form">
-                        <label for="quantidadeMinima">Quantidade Mínima de Estoque</label>
-                        <input type="number" name="quantidadeMinima" id="quantidadeMinima" min="1" step="1" required />
-                    </div>
-
-                    <div class="grupo-form">
-                        <label for="valor">Valor Unitário</label>
-                        <input type="number" name="valor" id="valor" min="0.01" step="0.01" required />
-                    </div>
-                
-                
-                    <div class="grupo-form full">
-                        <label>Total</label>
-                        <input type="number" name="total" id="total" readonly />
-                    </div>
-                
                 <div class="grupo-form">
-                    <label for="status">Tipo de Movimentação Inicial</label>
-                    <select name="status" id="status" required>
-                        <option value="">Escolha um tipo</option>
-                        <option value="entrada">Entrada</option>
-                        <option value="saida">Saída</option>
-                    </select>
-                </div>                
+                    <label class="dataFabricacao" for="dataFabricacao">Data de Fabricação</label>
+                    <input type="date" name="dataFabricacao" id="dataFabricacao" required />
+                </div>
+
+                <div class="grupo-form">
+                    <label class="dataVencimento" for="dataVencimento">Data de Vencimento</label>
+                    <input type="date" name="dataVencimento" id="dataVencimento" required />
+                </div>
+
+                <div class="grupo-form">
+                    <label for="quantidade">Quantidade</label>
+                    <input type="number" name="quantidade" id="quantidade" min="1" step="1" required />
+                </div>
+
+                <div class="grupo-form">
+                    <label for="quantidadeMinima">Quantidade Mínima de Estoque</label>
+                    <input type="number" name="quantidadeMinima" id="quantidadeMinima" min="1" step="1" required />
+                </div>
+
+                <div class="grupo-form">
+                    <label for="valor">Valor Unitário</label>
+                    <input type="number" name="valor" id="valor" min="0.01" step="0.01" required />
+                </div>
+
+                <div class="grupo-form full">
+                    <label>Total</label>
+                    <input type="number" name="total" id="total" readonly />
+                </div>
+
                 <div class="acoes-form">
                     <button type="submit" class="btn-salvar">Salvar</button>
                     <a href="dashboard.html" class="btn-cancelar">Cancelar</a>
