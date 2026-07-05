@@ -237,6 +237,29 @@ main {
     background: rgba(79, 172, 254, 0.04);
 }
 
+/* Badges de nível de estoque */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-normal {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badge-baixo {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
 /* --- 7. Paginação --- */
 #paginacao {
     margin: 0; /* Zerado, o gap do .geral-produto gerencia o espaço */

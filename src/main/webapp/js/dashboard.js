@@ -9,7 +9,6 @@ async function carregarEstoque() {
         tabela.innerHTML = "";
 
         dados.forEach(item => {
-            const nivel = item.nivel === 'BAIXO' ? 'Baixo' : 'Normal';
             const linha = `
                 <tr>
                     <td>${item.codigoBarras}</td>
@@ -21,7 +20,7 @@ async function carregarEstoque() {
                     <td>${item.quantidade}</td>
                     <td>${item.valor}</td>
                     <td>${item.total}</td>
-                    <td>${nivel}</td>
+                    <td>${htmlBadgeNivel(item)}</td>
                 </tr>`;
             tabela.innerHTML += linha;
         });
@@ -29,6 +28,32 @@ async function carregarEstoque() {
     } catch (erro) {
         console.error("Erro ao carregar os produtos:", erro);
     }
+}
+
+function obterNivel(produto) {
+    if (produto.nivel) {
+        return produto.nivel;
+    }
+    const qtd = Number(produto.quantidade) || 0;
+    const min = Number(produto.quantidadeMinima) || 0;
+    if (min > 0 && qtd < min) {
+        return 'BAIXO';
+    }
+    return 'NORMAL';
+}
+
+function formatarNivel(nivel) {
+    if (nivel === 'BAIXO') return 'Baixo';
+    return 'Normal';
+}
+
+function classeBadgeNivel(nivel) {
+    return nivel === 'BAIXO' ? 'baixo' : 'normal';
+}
+
+function htmlBadgeNivel(produto) {
+    const nivel = obterNivel(produto);
+    return `<span class="badge badge-${classeBadgeNivel(nivel)}">${formatarNivel(nivel)}</span>`;
 }
 
 async function carregarResumo() {

@@ -20,7 +20,6 @@ async function filtroEstoque() {
         });
 
         filtrados.forEach(item => {
-            const nivel = item.nivel === 'BAIXO' ? 'Baixo' : 'Normal';
             const linha = `
             <tr>
                 <td>${item.codigoBarras}</td>
@@ -32,7 +31,7 @@ async function filtroEstoque() {
                 <td>${item.quantidade}</td>
                 <td>${parseFloat(item.valor).toFixed(2)}</td>
                 <td>${parseFloat(item.total).toFixed(2)}</td>
-                <td>${nivel}</td>
+                <td>${htmlBadgeNivel(item)}</td>
             </tr>
         `;
             tabela.innerHTML += linha;

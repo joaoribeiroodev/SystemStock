@@ -70,3 +70,8 @@ CREATE TABLE movimentacoes (
 
     INDEX idx_movimentacao_produto_data (produto_id, data_movimentacao)
 );
+
+INSERT INTO users (username, psw, funcao)
+VALUES ('hugo', 
+'$2a$10$rX9d0t73mik9r6G2UI/sTOH.IAEI2iMl7MvTO0WzocUQ2WSIzRjBC',
+'ADMIN');
