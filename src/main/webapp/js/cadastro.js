@@ -13,8 +13,12 @@ function hojeISO() {
     return dataLocalISO(new Date());
 }
 
-function somenteDigitos(valor) {
-    return String(valor || "").replace(/\D/g, "").slice(0, CPF_DIGITOS);
+function somenteDigitos(valor, limite) {
+    var limpo = String(valor || "").replace(/\D/g, "");
+    if (limite) {
+        limpo = limpo.slice(0, limite);
+    }
+    return limpo;
 }
 
 function validarDataNascimento(dataParaValidar) {
@@ -35,7 +39,7 @@ function validarDataNascimento(dataParaValidar) {
 }
 
 function validarCpf(valor) {
-    var digitos = somenteDigitos(valor);
+    var digitos = somenteDigitos(valor, CPF_DIGITOS);
 
     if (!digitos) {
         return { ehValida: false, mensagem: "O CPF é obrigatório." };
@@ -61,9 +65,21 @@ function configurarCampoCpf() {
     if (!inputCpf) return;
 
     inputCpf.addEventListener("input", function () {
-        var limpo = somenteDigitos(inputCpf.value);
+        var limpo = somenteDigitos(inputCpf.value, CPF_DIGITOS);
         if (inputCpf.value !== limpo) {
             inputCpf.value = limpo;
+        }
+    });
+}
+
+function configurarCampoNumero() {
+    var inputNumero = document.getElementById("numero");
+    if (!inputNumero) return;
+
+    inputNumero.addEventListener("input", function () {
+        var limpo = somenteDigitos(inputNumero.value);
+        if (inputNumero.value !== limpo) {
+            inputNumero.value = limpo;
         }
     });
 }
@@ -118,6 +134,7 @@ function checarCpf() {
 
 configurarLimitesDataNascimento();
 configurarCampoCpf();
+configurarCampoNumero();
 
 if (inputData) {
     inputData.addEventListener("blur", checarDataNascimento);
