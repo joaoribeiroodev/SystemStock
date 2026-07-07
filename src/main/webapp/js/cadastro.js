@@ -1,4 +1,5 @@
 const DATA_NASCIMENTO_MIN = "1900-01-01";
+const CPF_DIGITOS = 11;
 
 function dataLocalISO(date) {
     var d = date || new Date();
@@ -10,6 +11,10 @@ function dataLocalISO(date) {
 
 function hojeISO() {
     return dataLocalISO(new Date());
+}
+
+function somenteDigitos(valor) {
+    return String(valor || "").replace(/\D/g, "").slice(0, CPF_DIGITOS);
 }
 
 function validarDataNascimento(dataParaValidar) {
@@ -29,6 +34,20 @@ function validarDataNascimento(dataParaValidar) {
     return { ehValida: true, mensagem: "" };
 }
 
+function validarCpf(valor) {
+    var digitos = somenteDigitos(valor);
+
+    if (!digitos) {
+        return { ehValida: false, mensagem: "O CPF é obrigatório." };
+    }
+
+    if (digitos.length !== CPF_DIGITOS) {
+        return { ehValida: false, mensagem: "O CPF deve conter exatamente 11 dígitos." };
+    }
+
+    return { ehValida: true, mensagem: "" };
+}
+
 function configurarLimitesDataNascimento() {
     var inputData = document.getElementById("dtaNascimento");
     if (!inputData) return;
@@ -37,45 +56,92 @@ function configurarLimitesDataNascimento() {
     inputData.max = hojeISO();
 }
 
+function configurarCampoCpf() {
+    var inputCpf = document.getElementById("cpf");
+    if (!inputCpf) return;
+
+    inputCpf.addEventListener("input", function () {
+        var limpo = somenteDigitos(inputCpf.value);
+        if (inputCpf.value !== limpo) {
+            inputCpf.value = limpo;
+        }
+    });
+}
+
 const inputData = document.getElementById("dtaNascimento");
+const inputCpf = document.getElementById("cpf");
 const avisoErro = document.getElementById("avisoErro");
+const avisoErroCpf = document.getElementById("avisoErroCpf");
 const formCadastro = document.querySelector('form[action="cadastro"]');
 
-function checarEExibirErro() {
-    if (!inputData || !avisoErro) return;
+function exibirErro(elementoAviso, mensagem) {
+    if (!elementoAviso) return;
+    elementoAviso.textContent = mensagem;
+    elementoAviso.style.display = "inline";
+}
+
+function ocultarErro(elementoAviso) {
+    if (!elementoAviso) return;
+    elementoAviso.style.display = "none";
+}
+
+function checarDataNascimento() {
+    if (!inputData) return { ehValida: true, mensagem: "" };
 
     var resultado = validarDataNascimento(inputData.value);
 
     if (!resultado.ehValida) {
-        avisoErro.textContent = resultado.mensagem;
-        avisoErro.style.display = "inline";
+        exibirErro(avisoErro, resultado.mensagem);
         if (inputData.value && inputData.value > hojeISO()) {
             inputData.value = "";
         }
     } else {
-        avisoErro.style.display = "none";
+        ocultarErro(avisoErro);
     }
+
+    return resultado;
+}
+
+function checarCpf() {
+    if (!inputCpf) return { ehValida: true, mensagem: "" };
+
+    var resultado = validarCpf(inputCpf.value);
+
+    if (!resultado.ehValida) {
+        exibirErro(avisoErroCpf, resultado.mensagem);
+    } else {
+        ocultarErro(avisoErroCpf);
+    }
+
+    return resultado;
 }
 
 configurarLimitesDataNascimento();
+configurarCampoCpf();
 
 if (inputData) {
-    inputData.addEventListener("blur", checarEExibirErro);
-    inputData.addEventListener("change", checarEExibirErro);
+    inputData.addEventListener("blur", checarDataNascimento);
+    inputData.addEventListener("change", checarDataNascimento);
+}
+
+if (inputCpf) {
+    inputCpf.addEventListener("blur", checarCpf);
 }
 
 if (formCadastro) {
     formCadastro.addEventListener("submit", function (e) {
-        var resultado = validarDataNascimento(inputData ? inputData.value : "");
-        if (!resultado.ehValida) {
+        var resultadoData = checarDataNascimento();
+        var resultadoCpf = checarCpf();
+
+        if (!resultadoData.ehValida) {
             e.preventDefault();
-            if (avisoErro) {
-                avisoErro.textContent = resultado.mensagem;
-                avisoErro.style.display = "inline";
-            }
-            if (inputData) {
-                inputData.focus();
-            }
+            if (inputData) inputData.focus();
+            return;
+        }
+
+        if (!resultadoCpf.ehValida) {
+            e.preventDefault();
+            if (inputCpf) inputCpf.focus();
         }
     });
 }
