@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import model.CadastroUsuarioModel;
 import util.PerfilUtil;
+import util.ValidacaoUsuario;
 
 @WebServlet("/pages/cadastro")
 public class CadastroController extends HttpServlet {
@@ -32,7 +33,13 @@ public class CadastroController extends HttpServlet {
         user.setMatricula(request.getParameter("matricula"));
         user.setCpf(request.getParameter("cpf"));
         user.setSexo(request.getParameter("opcao"));
-        user.setData(request.getParameter("dtaNascimento"));
+
+        String dataNascimento = request.getParameter("dtaNascimento");
+        if (ValidacaoUsuario.validarDataNascimento(dataNascimento) != null) {
+            response.sendRedirect(request.getContextPath() + "/pages/cadastro.html");
+            return;
+        }
+        user.setData(dataNascimento);
         user.setEmail(request.getParameter("email"));
         user.setTelefone(request.getParameter("telefone"));
         user.setNomeUsuario(request.getParameter("usuario"));

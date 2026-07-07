@@ -1,39 +1,81 @@
-//impede ano data superior À corrrente
+const DATA_NASCIMENTO_MIN = "1900-01-01";
+
+function dataLocalISO(date) {
+    var d = date || new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var dia = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + dia;
+}
+
+function hojeISO() {
+    return dataLocalISO(new Date());
+}
 
 function validarDataNascimento(dataParaValidar) {
-  // Regra 1: Vazio
-  if (!dataParaValidar || dataParaValidar.trim() === '') {
-    return { ehValida: false, mensagem: 'O campo de data é obrigatório e não pode ficar vazio!' };
-  }
+    if (!dataParaValidar || dataParaValidar.trim() === "") {
+        return { ehValida: false, mensagem: "O campo de data é obrigatório e não pode ficar vazio!" };
+    }
 
-  // Regra 2: Futuro
-  const dataDeHoje = new Date().toISOString().split('T')[0];
-  if (dataParaValidar > dataDeHoje) {
-    return { ehValida: false, mensagem: 'A data de nascimento não pode ser no futuro!' };
-  }
+    if (dataParaValidar < DATA_NASCIMENTO_MIN) {
+        return { ehValida: false, mensagem: "A data de nascimento deve ser a partir de 01/01/1900." };
+    }
 
-  return { ehValida: true, mensagem: '' };
+    var hoje = hojeISO();
+    if (dataParaValidar > hoje) {
+        return { ehValida: false, mensagem: "A data de nascimento não pode ser no futuro!" };
+    }
+
+    return { ehValida: true, mensagem: "" };
 }
 
-const inputData = document.getElementById('dtaNascimento');
-const avisoErro = document.getElementById('avisoErro');
+function configurarLimitesDataNascimento() {
+    var inputData = document.getElementById("dtaNascimento");
+    if (!inputData) return;
 
-// Função que será chamada para checar e mostrar o aviso
+    inputData.min = DATA_NASCIMENTO_MIN;
+    inputData.max = hojeISO();
+}
+
+const inputData = document.getElementById("dtaNascimento");
+const avisoErro = document.getElementById("avisoErro");
+const formCadastro = document.querySelector('form[action="cadastro"]');
+
 function checarEExibirErro() {
-  const dataEscolhida = inputData.value;
-  const resultado = validarDataNascimento(dataEscolhida);
+    if (!inputData || !avisoErro) return;
 
-  if (!resultado.ehValida) {
-    avisoErro.textContent = resultado.mensagem;
-    avisoErro.style.display = 'inline';
-    inputData.value = ''; // Limpa caso seja uma data futura
-  } else {
-    avisoErro.style.display = 'none';
-  }
+    var resultado = validarDataNascimento(inputData.value);
+
+    if (!resultado.ehValida) {
+        avisoErro.textContent = resultado.mensagem;
+        avisoErro.style.display = "inline";
+        if (inputData.value && inputData.value > hojeISO()) {
+            inputData.value = "";
+        }
+    } else {
+        avisoErro.style.display = "none";
+    }
 }
 
-// O 'blur' garante que se o usuário clicar no campo e sair sem digitar, o aviso de vazio aparece
-inputData.addEventListener('blur', checarEExibirErro);
+configurarLimitesDataNascimento();
 
-// O 'change' garante que se ele digitar uma data inválida, avisa na mesma hora
-inputData.addEventListener('change', checarEExibirErro);
+if (inputData) {
+    inputData.addEventListener("blur", checarEExibirErro);
+    inputData.addEventListener("change", checarEExibirErro);
+}
+
+if (formCadastro) {
+    formCadastro.addEventListener("submit", function (e) {
+        var resultado = validarDataNascimento(inputData ? inputData.value : "");
+        if (!resultado.ehValida) {
+            e.preventDefault();
+            if (avisoErro) {
+                avisoErro.textContent = resultado.mensagem;
+                avisoErro.style.display = "inline";
+            }
+            if (inputData) {
+                inputData.focus();
+            }
+        }
+    });
+}
