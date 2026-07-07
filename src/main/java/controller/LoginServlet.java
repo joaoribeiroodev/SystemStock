@@ -30,8 +30,11 @@ public class LoginServlet extends HttpServlet{
         UserModel user = dao.validarLogin(userModel);
         
         if(user != null){
-            HttpSession session =
-                    request.getSession();
+            HttpSession oldSession = request.getSession(false);
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
+            HttpSession session = request.getSession(true);
             
             session.setAttribute("usuario", user.getUsername());
             session.setAttribute("perfil", user.getFuncao());

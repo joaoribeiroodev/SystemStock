@@ -17,7 +17,7 @@
             <ul class="menu-lista">
                 <li><a href="dashboard.html">Início</a></li>
                 <li><a href="gerenciamento.html">Gerenciamento</a></li>
-                <li><a href="cadastro.html" class="btn-menu">Cadastro</a></li>
+                <li><a href="cadastro.html" class="btn-menu" data-menu="cadastro-usuario">Cadastro Usuário</a></li>
                 <li><a href="#" id="btnLogout" class="btn-menu">Sair</a></li>
             </ul>
         </nav>
@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="card-resumo">
-                    <h3 class="titulo-card">Total</h3>
+                    <h3 class="titulo-card">Estoque atual</h3>
                     <p id="cardTotal" class="valor-card">0</p>
                 </div>
             </section>
@@ -88,12 +88,7 @@
             <section id="paginacao">
                 <div class="controle-paginacao">
                     <label for="pagina">Página</label>
-                    <select id="pagina">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
+                    <select id="pagina"></select>
                 </div>
                 <div class="conteiner-btn">
                     <button id="btnVoltar" class="btn-voltar">Voltar</button>

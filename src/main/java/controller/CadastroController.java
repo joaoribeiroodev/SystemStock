@@ -6,14 +6,24 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import model.CadastroUsuarioModel;
+import util.PerfilUtil;
 
 @WebServlet("/pages/cadastro")
 public class CadastroController extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        String perfil = session != null ? (String) session.getAttribute("perfil") : null;
+
+        if (!PerfilUtil.podeCadastrarUsuario(perfil)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
 
         CadastroUsuarioModel user = new CadastroUsuarioModel();
 
@@ -41,10 +51,8 @@ public class CadastroController extends HttpServlet {
         CadastroUsersDAO dao = new CadastroUsersDAO();
 
         if (dao.cadastrar(user)) {
-
             response.sendRedirect(request.getContextPath() + "/pages/dashboard.html");
         } else {
-
             response.sendRedirect(request.getContextPath() + "/pages/cadastro.html");
         }
     }

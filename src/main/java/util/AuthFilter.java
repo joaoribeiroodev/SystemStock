@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import util.PerfilUtil;
 
 @WebFilter("/*")
 public class AuthFilter implements Filter {
@@ -47,18 +48,24 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // ── Protege APENAS o cadastro de usuários (requer ADMIN) ──────────────
-        // Usa endsWith para evitar falso-positivo em /cadastroProdutos
-        boolean isRotaAdminExclusiva = uri.endsWith("/pages/cadastro");
-
-        if (isRotaAdminExclusiva) {
+        // ── Cadastro de usuários — somente ADMIN ─────────────────────────────
+        if (isRotaCadastroUsuario(uri)) {
             String perfil = (String) session.getAttribute("perfil");
-            if (!"ADMIN".equalsIgnoreCase(perfil)) {
-                res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            if (!PerfilUtil.podeCadastrarUsuario(perfil)) {
+                if (uri.endsWith("/pages/cadastro")) {
+                    res.sendError(HttpServletResponse.SC_FORBIDDEN);
+                } else {
+                    res.sendRedirect(req.getContextPath() + "/pages/dashboard.html");
+                }
                 return;
             }
         }
 
         chain.doFilter(request, response);
+    }
+
+    private boolean isRotaCadastroUsuario(String uri) {
+        return uri.endsWith("/pages/cadastro")
+                || uri.contains("/pages/cadastro.html");
     }
 }

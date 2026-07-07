@@ -2,7 +2,6 @@ package controller;
 
 import dao.CadastroProdutoDAO;
 import dao.CadastroProdutoDAO.ExistenciaCodigoBarras;
-import dao.MovimentacaoDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -66,7 +65,6 @@ public class CadastroProdutosController extends HttpServlet {
         }
 
         CadastroProdutoDAO dao = new CadastroProdutoDAO();
-        MovimentacaoDAO movDAO = new MovimentacaoDAO();
 
         String codigoBarras = request.getParameter("codigoBarras");
         if (ValidacaoProduto.isBlank(codigoBarras)
@@ -89,19 +87,7 @@ public class CadastroProdutosController extends HttpServlet {
         produto.setTotal(valor.multiply(BigDecimal.valueOf(quantidade)).toPlainString());
         produto.setStatus("ENTRADA");
 
-        if (dao.salvar(produto)) {
-
-            int produtoId = dao.buscarIdPorCodigo(produto.getCodigoBarras());
-
-            if (produtoId > 0) {
-                boolean movOk = movDAO.registrar(produtoId, produto.getStatus(), produto.getQuantidade());
-                if (!movOk) {
-                    System.err.println("[CadastroProdutosController] Produto salvo, mas falha ao registrar movimentação. produtoId=" + produtoId);
-                }
-            } else {
-                System.err.println("[CadastroProdutosController] Não foi possível recuperar o ID do produto recém-inserido.");
-            }
-
+        if (dao.salvarComMovimentacaoInicial(produto)) {
             response.sendRedirect(request.getContextPath() + "/pages/dashboard.html");
         } else {
             response.sendRedirect(redirectErroCadastro(request, "cadastro_falhou"));

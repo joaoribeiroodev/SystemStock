@@ -151,7 +151,7 @@ public class GerenciamentoProdutosController extends HttpServlet {
         } catch (java.sql.SQLException e) {
             System.err.println("[GerenciamentoProdutosController] Erro SQL: " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"erro\":\"Erro no Banco de Dados: " + e.getMessage() + "\"}");
+            response.getWriter().write("{\"erro\":\"Erro ao excluir produto. Tente novamente.\"}");
         }
     }
 }

@@ -10,7 +10,7 @@ import util.SenhaUtil;
 public class UserDAO {
 
     public UserModel validarLogin(UserModel userModel) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE BINARY username = ?";
         try (var con = ConnectionFactory.getConnection()) {
             PreparedStatement stmt
                     = con.prepareStatement(sql);

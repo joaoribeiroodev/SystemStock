@@ -1,3 +1,4 @@
+
 function dataLocalISO(date) {
     var d = date || new Date();
     var y = d.getFullYear();
@@ -143,3 +144,48 @@ document.getElementById("formCadastro").addEventListener("submit", function (e) 
         alert(erroData);
     }
 });
+
+// Função que valida e limpa o texto, retornando apenas números
+function formatarApenasNumeros(texto) {
+    // O \D encontra letras, espaços, acentos e símbolos.
+    // O replace troca tudo isso por nada (''), sobrando apenas os números.
+    return texto.replace(/\D/g, '');
+}
+
+const input = document.getElementById('quantidade');
+
+//Aplica a função toda vez que o usuário digitar ou colar algo
+input.addEventListener('input', function(e) {
+    // Pega o valor atual, passa na função de limpeza e devolve para o input
+    this.value = formatarApenasNumeros(this.value);
+});
+
+let tempoAviso;
+
+// Função normal e direta
+function validarNumeros(event) {
+    const input = event.target; // Pega o input que disparou o evento
+    const avisoErro = document.getElementById('avisoErro'); 
+    
+    const valorOriginal = input.value;
+    const valorLimpo = valorOriginal.replace(/\D/g, ''); // Remove tudo que não for número
+    
+    // Se digitou algo errado, mostra o erro visual
+    if (valorOriginal !== valorLimpo) {
+        input.classList.add('input-erro');
+        avisoErro.classList.add('mostrar-erro');
+        
+        clearTimeout(tempoAviso);
+        tempoAviso = setTimeout(function() {
+            input.classList.remove('input-erro');
+            avisoErro.classList.remove('mostrar-erro');
+        }, 2000);
+    }
+    
+    // Atualiza o valor do input só com os números
+    input.value = valorLimpo;
+}
+
+// Conecta o input à função
+const meuInput = document.getElementById('quantidade');
+meuInput.addEventListener('input', validarNumeros);

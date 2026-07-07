@@ -1,16 +1,25 @@
-async function validarLogin() {
+async function aplicarPermissoesMenu() {
     try {
-        const res = await fetch("http://localhost:8080/api/perfil");
-        const dado = await res.json();
+        const res = await fetch("../api/perfil");
+        if (!res.ok) return;
 
-        console.log("PERFIL FRONT: ", dado.perfil);
+        const dados = await res.json();
 
-        if(!dado.perfil || dado.perfil.toLowerCase() !== "admin") {
-            document.getElementsByClassName(".btn-menu").style.display = "none";
+        if (!dados.podeCadastrarUsuario) {
+            document.querySelectorAll('[data-menu="cadastro-usuario"]').forEach(function (el) {
+                el.style.display = "none";
+                if (el.parentElement && el.parentElement.tagName === "LI") {
+                    el.parentElement.style.display = "none";
+                }
+            });
         }
     } catch (e) {
-        console.log("Erro ao verificar o perfil.", e);
+        console.error("Erro ao verificar permissões do menu:", e);
     }
 }
 
-validarLogin();
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", aplicarPermissoesMenu);
+} else {
+    aplicarPermissoesMenu();
+}

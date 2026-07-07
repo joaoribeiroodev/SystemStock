@@ -6,13 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import util.PerfilUtil;
 
 @WebServlet("/api/perfil")
 public class PerfilController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-
 
         HttpSession session = request.getSession(false);
 
@@ -22,11 +22,14 @@ public class PerfilController extends HttpServlet {
         }
 
         String perfil = (String) session.getAttribute("perfil");
+        boolean podeCadastrarUsuario = PerfilUtil.podeCadastrarUsuario(perfil);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-
-        response.getWriter().write("{\"perfil\":\"" + (perfil != null ? perfil : "") + "\"}");
+        response.getWriter().write(
+                "{\"perfil\":\"" + (perfil != null ? perfil : "") + "\","
+                        + "\"podeCadastrarUsuario\":" + podeCadastrarUsuario + "}"
+        );
     }
 }

@@ -95,6 +95,67 @@ public class CadastroProdutoDAO {
         }
     }
 
+    /** Salva produto e movimentação inicial na mesma transação. */
+    public boolean salvarComMovimentacaoInicial(CadastroProdutoModel produto) {
+        String sqlProduto = "INSERT INTO produtos "
+                + "(codigo_barras, nome_produto, fabricante, marca, data_fabricacao, data_vencimento, "
+                + "quantidade, quantidade_minima, valor, total, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlMov = "INSERT INTO movimentacoes (produto_id, tipo, quantidade) VALUES (?, ?, ?)";
+
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            if (conn == null) {
+                return false;
+            }
+
+            conn.setAutoCommit(false);
+            try {
+                int produtoId;
+                try (PreparedStatement stmt = conn.prepareStatement(sqlProduto, Statement.RETURN_GENERATED_KEYS)) {
+                    stmt.setString(1, produto.getCodigoBarras());
+                    stmt.setString(2, produto.getNomeProduto());
+                    stmt.setString(3, produto.getFabricante());
+                    stmt.setString(4, produto.getMarca());
+                    stmt.setDate(5, Date.valueOf(produto.getDataFabricacao()));
+                    stmt.setDate(6, Date.valueOf(produto.getDataVencimento()));
+                    stmt.setLong(7, produto.getQuantidade());
+                    stmt.setLong(8, produto.getQuantidadeMinima());
+                    stmt.setBigDecimal(9, new BigDecimal(produto.getValor()));
+                    stmt.setBigDecimal(10, new BigDecimal(produto.getTotal()));
+                    stmt.setString(11, produto.getStatus().toUpperCase());
+                    stmt.executeUpdate();
+
+                    try (ResultSet keys = stmt.getGeneratedKeys()) {
+                        if (!keys.next()) {
+                            conn.rollback();
+                            return false;
+                        }
+                        produtoId = keys.getInt(1);
+                    }
+                }
+
+                try (PreparedStatement psMov = conn.prepareStatement(sqlMov)) {
+                    psMov.setInt(1, produtoId);
+                    psMov.setString(2, produto.getStatus().toUpperCase());
+                    psMov.setLong(3, produto.getQuantidade());
+                    psMov.executeUpdate();
+                }
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            System.err.println("[CadastroProdutoDAO] Erro ao salvar produto com movimentação: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
      //  CORRIGIDO: Filtra apenas produtos ativos (Soft Delete)
 
@@ -106,7 +167,9 @@ public class CadastroProdutoDAO {
 
 
         if (nome != null && !nome.isBlank()) sql.append(" AND LOWER(nome_produto) LIKE ?");
-        if (tipo != null && !tipo.isBlank()) sql.append(" AND status = ?");
+        if (tipo != null && !tipo.isBlank()) {
+            sql.append(" AND EXISTS (SELECT 1 FROM movimentacoes m WHERE m.produto_id = produtos.id AND m.tipo = ?)");
+        }
         if (data != null && !data.isBlank()) sql.append(" AND data_fabricacao = ?");
 
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
@@ -347,7 +410,7 @@ public class CadastroProdutoDAO {
             return "Tipo de movimentação inválido.";
         }
 
-        String sqlSelect = "SELECT id, quantidade, valor FROM produtos WHERE codigo_barras = ? AND ativo = TRUE";
+        String sqlSelect = "SELECT id, quantidade, valor FROM produtos WHERE codigo_barras = ? AND ativo = TRUE FOR UPDATE";
         String sqlUpdate = "UPDATE produtos SET quantidade = ?, total = ?, status = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?";
 
         try (Connection conn = ConnectionFactory.getConnection()) {

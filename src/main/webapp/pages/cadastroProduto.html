@@ -17,7 +17,7 @@
             <ul class="menu-lista">
                 <li><a href="dashboard.html">Início</a></li>
                 <li><a href="gerenciamento.html">Gerenciamento</a></li>
-                <li><a href="cadastro.html" class="btn-menu">Cadastro</a></li>
+                <li><a href="cadastro.html" class="btn-menu" data-menu="cadastro-usuario">Cadastro Usuário</a></li>
             </ul>
         </nav>
     </header>
@@ -58,7 +58,8 @@
 
                 <div class="grupo-form">
                     <label for="quantidade">Quantidade</label>
-                    <input type="number" name="quantidade" id="quantidade" min="1" step="1" required />
+                    <input type="number" name="quantidade" id="quantidade" min="1" step="1" required pattern="\d*"/>
+                    <span id="avisoErro" class="mensagem-erro">Por favor, digite apenas números.</span>
                 </div>
 
                 <div class="grupo-form">
@@ -85,6 +86,7 @@
     </main>
 
     <script src="../js/cadastroProduto.js"></script>
+    <script src="../js/validarLogin.js"></script>
 
 </body>
 

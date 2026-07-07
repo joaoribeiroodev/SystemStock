@@ -22,10 +22,13 @@ public class ResumoEstoqueController extends HttpServlet {
 
         String sql = """
                      SELECT
-                         COALESCE(SUM(CASE WHEN m.tipo = 'ENTRADA' THEN m.quantidade ELSE 0 END), 0) AS entrada,
-                         COALESCE(SUM(CASE WHEN m.tipo = 'SAIDA'   THEN m.quantidade ELSE 0 END), 0) AS saida
-                     FROM movimentacoes m
-                     INNER JOIN produtos p ON p.id = m.produto_id AND p.ativo = TRUE
+                         (SELECT COALESCE(SUM(CASE WHEN m.tipo = 'ENTRADA' THEN m.quantidade ELSE 0 END), 0)
+                          FROM movimentacoes m
+                          INNER JOIN produtos p ON p.id = m.produto_id AND p.ativo = TRUE) AS entrada,
+                         (SELECT COALESCE(SUM(CASE WHEN m.tipo = 'SAIDA' THEN m.quantidade ELSE 0 END), 0)
+                          FROM movimentacoes m
+                          INNER JOIN produtos p ON p.id = m.produto_id AND p.ativo = TRUE) AS saida,
+                         (SELECT COALESCE(SUM(quantidade), 0) FROM produtos WHERE ativo = TRUE) AS total
                      """;
 
         response.setContentType("application/json");
@@ -37,13 +40,13 @@ public class ResumoEstoqueController extends HttpServlet {
 
             int entrada = 0;
             int saida   = 0;
+            int total   = 0;
 
             if (rs.next()) {
                 entrada = rs.getInt("entrada");
                 saida   = rs.getInt("saida");
+                total   = rs.getInt("total");
             }
-
-            int total = entrada - saida;
 
             Map<String, Integer> resultado = new HashMap<>();
             resultado.put("entrada", entrada);

@@ -4,7 +4,7 @@ USE estoque_db;
 CREATE TABLE users (
     id               INT           AUTO_INCREMENT PRIMARY KEY,
 
-    username         VARCHAR(100)  NOT NULL UNIQUE,
+    username         VARCHAR(100)  NOT NULL UNIQUE COLLATE utf8mb4_bin,
     psw              VARCHAR(255)  NOT NULL,
 
     nameFirst        VARCHAR(100),
@@ -73,5 +73,7 @@ CREATE TABLE movimentacoes (
 
 INSERT INTO users (username, psw, funcao)
 VALUES ('hugo', 
-'$2a$10$rX9d0t73mik9r6G2UI/sTOH.IAEI2iMl7MvTO0WzocUQ2WSIzRjBC',
+'$2a$10$zdrY5PUKObc4.N8okesIyOxJDG6VtwNr64QJglbLiEGZzAXtf7qPS',
 'ADMIN');
+
+
