@@ -95,16 +95,8 @@ docker compose up --build
 4. Acesse a aplicação em:
 
 ```text
-http://localhost:8080/pages/gerenciamento.html
+http://localhost:8080
 ```
-
-## Por que este projeto é relevante para recrutadores
-
-- Mostra experiência prática com backend Java em ambiente Jakarta EE
-- Demonstra integração entre frontend moderno e APIs REST
-- Apresenta práticas de segurança de senha e persistência relacional
-- Inclui automação de build, containerização e CI/CD
-- Estrutura de código organizada e focada em manutenção
 
 ---
 
