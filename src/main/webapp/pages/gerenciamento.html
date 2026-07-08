@@ -40,6 +40,11 @@
                 <span class="sidebar-icon">🔄</span>
                 <span>Movimentação</span>
             </a>
+            <a href="#secao-solicitacoes" class="sidebar-link" data-secao="solicitacoes">
+                <span class="sidebar-icon">🛒</span>
+                <span>Solicitações de Compra</span>
+                <span id="badgeSolicitacoesPendentes" class="badge-contagem" style="display:none;">0</span>
+            </a>
         </nav>
     </aside>
 
@@ -106,6 +111,70 @@
                         </tr>
                         </thead>
                         <tbody id="corpoTabelaGerenciamento">
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===== SEÇÃO: SOLICITAÇÕES DE COMPRA ===== -->
+        <section id="secao-solicitacoes" class="secao">
+            <div class="card-glass">
+
+                <div class="card-header">
+                    <h2 class="card-titulo">Solicitações de Compra</h2>
+                    <div class="toolbar">
+                        <select id="filtroStatusSolicitacao" class="input-modal" style="width:200px;">
+                            <option value="">Todos os status</option>
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="EM_ANDAMENTO">Em andamento</option>
+                            <option value="ATENDIDA">Atendida</option>
+                            <option value="CANCELADA">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <p class="solicitacoes-hint">
+                    Emitidas automaticamente sempre que um produto fica com estoque abaixo da quantidade mínima
+                    cadastrada, e encerradas automaticamente assim que o estoque é reabastecido.
+                </p>
+
+                <!-- Estado: Carregando -->
+                <div id="solEstadoCarregando" class="estado-vazio">
+                    <div class="spinner"></div>
+                    <p>Carregando solicitações...</p>
+                </div>
+
+                <!-- Estado: Sem dados -->
+                <div id="solEstadoVazio" class="estado-vazio" style="display:none;">
+                    <span class="estado-icone">🛒</span>
+                    <p>Nenhuma solicitação de compra encontrada.</p>
+                </div>
+
+                <!-- Estado: Erro -->
+                <div id="solEstadoErro" class="estado-vazio" style="display:none;">
+                    <span class="estado-icone">⚠️</span>
+                    <p id="solMensagemErro">Erro ao carregar solicitações.</p>
+                    <button onclick="carregarSolicitacoes()" class="btn-novo" style="margin-top:1rem;">Tentar novamente</button>
+                </div>
+
+                <!-- Tabela de Solicitações -->
+                <div class="tabela-wrapper" id="solTabelaWrapper" style="display:none;">
+                    <table id="tabelaSolicitacoes">
+                        <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Local</th>
+                            <th>Qtd. Atual</th>
+                            <th>Qtd. Mínima</th>
+                            <th>Qtd. Sugerida</th>
+                            <th>Status</th>
+                            <th>Emitida em</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody id="corpoTabelaSolicitacoes">
                         </tbody>
                     </table>
                 </div>
@@ -231,6 +300,14 @@
                     <span class="detalhe-label">Quantidade Mínima</span>
                     <span id="det-quantidadeMinima" class="detalhe-valor">—</span>
                 </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Prateleira</span>
+                    <span id="det-prateleira" class="detalhe-valor">—</span>
+                </div>
+                <div class="detalhe-item">
+                    <span class="detalhe-label">Local de Armazenamento</span>
+                    <span id="det-localArmazenamento" class="detalhe-valor">—</span>
+                </div>
                 <div class="detalhe-item full">
                     <span class="detalhe-label">Nível de Estoque</span>
                     <span id="det-status" class="detalhe-valor">—</span>
@@ -280,6 +357,14 @@
                     <div class="grupo-modal">
                         <label for="edit-dataVencimento">Data de Vencimento</label>
                         <input type="date" id="edit-dataVencimento" class="input-modal" required>
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-prateleira">Prateleira</label>
+                        <input type="text" id="edit-prateleira" class="input-modal" maxlength="50" placeholder="Ex.: A1, Corredor 3">
+                    </div>
+                    <div class="grupo-modal">
+                        <label for="edit-localArmazenamento">Local de Armazenamento</label>
+                        <input type="text" id="edit-localArmazenamento" class="input-modal" maxlength="100" placeholder="Ex.: Depósito Central">
                     </div>
                 </div>
 

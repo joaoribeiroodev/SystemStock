@@ -45,6 +45,9 @@ CREATE TABLE produtos (
     valor             DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     total             DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
 
+    prateleira           VARCHAR(50)   NULL,
+    local_armazenamento  VARCHAR(100)  NULL,
+
     status            ENUM('ENTRADA', 'SAIDA') NOT NULL,
     ativo             BOOLEAN        NOT NULL DEFAULT TRUE,
 
@@ -69,6 +72,33 @@ CREATE TABLE movimentacoes (
         ON UPDATE CASCADE,
 
     INDEX idx_movimentacao_produto_data (produto_id, data_movimentacao)
+);
+
+CREATE TABLE solicitacoes_compra (
+    id                    INT       AUTO_INCREMENT PRIMARY KEY,
+    produto_id            INT       NOT NULL,
+    
+    codigo_barras         VARCHAR(100)  NOT NULL,
+    nome_produto          VARCHAR(255)  NOT NULL,
+
+    quantidade_atual      BIGINT    NOT NULL,
+    quantidade_minima     BIGINT    NOT NULL,
+    quantidade_sugerida   BIGINT    NOT NULL,
+
+    status                ENUM('PENDENTE', 'EM_ANDAMENTO', 'ATENDIDA', 'CANCELADA')
+                              NOT NULL DEFAULT 'PENDENTE',
+    observacao            VARCHAR(255) NULL,
+
+    criado_em             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_solicitacao_produto
+        FOREIGN KEY (produto_id)
+        REFERENCES produtos (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    INDEX idx_solicitacao_produto_status (produto_id, status)
 );
 
 INSERT INTO users (username, psw, funcao)

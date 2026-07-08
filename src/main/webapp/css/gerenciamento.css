@@ -437,12 +437,14 @@ body {
     overflow-x: auto;
 }
 
-#tabelaGerenciamento {
+#tabelaGerenciamento,
+#tabelaSolicitacoes {
     width: 100%;
     border-collapse: collapse;
 }
 
-#tabelaGerenciamento th {
+#tabelaGerenciamento th,
+#tabelaSolicitacoes th {
     background: rgba(255, 255, 255, 0.025);
     padding: 1rem 1.2rem;
     text-align: left;
@@ -454,7 +456,8 @@ body {
     white-space: nowrap;
 }
 
-#tabelaGerenciamento td {
+#tabelaGerenciamento td,
+#tabelaSolicitacoes td {
     padding: 1rem 1.2rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.025);
     font-size: 0.88rem;
@@ -462,15 +465,18 @@ body {
     vertical-align: middle;
 }
 
-#tabelaGerenciamento tbody tr {
+#tabelaGerenciamento tbody tr,
+#tabelaSolicitacoes tbody tr {
     transition: background 0.2s;
 }
 
-#tabelaGerenciamento tbody tr:hover {
+#tabelaGerenciamento tbody tr:hover,
+#tabelaSolicitacoes tbody tr:hover {
     background: rgba(79, 172, 254, 0.04);
 }
 
-#tabelaGerenciamento tbody tr:last-child td {
+#tabelaGerenciamento tbody tr:last-child td,
+#tabelaSolicitacoes tbody tr:last-child td {
     border-bottom: none;
 }
 
@@ -507,6 +513,89 @@ body {
     background: rgba(245, 158, 11, 0.15);
     color: #fbbf24;
     border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-pendente {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-em-andamento {
+    background: rgba(79, 172, 254, 0.15);
+    color: #4facfe;
+    border: 1px solid rgba(79, 172, 254, 0.3);
+}
+
+.badge-atendida {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badge-cancelada {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* Contador de solicitações pendentes na sidebar */
+.badge-contagem {
+    margin-left: auto;
+    background: #fbbf24;
+    color: #0b0f19;
+    font-size: 0.68rem;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    align-items: center;
+    justify-content: center;
+    display: inline-flex;
+}
+
+/* Texto explicativo acima da tabela de solicitações */
+.solicitacoes-hint {
+    padding: 0 2rem 1rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+#filtroStatusSolicitacao {
+    min-width: 200px;
+    max-width: 240px;
+}
+
+#tabelaSolicitacoes code {
+    display: inline-block;
+    margin-top: 0.25rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.15rem 0.35rem;
+    border-radius: 6px;
+}
+
+.acoes-solicitacao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: flex-end;
+    min-width: 220px;
+}
+
+.btn-cancelar-sol {
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.btn-cancelar-sol:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
 }
 
 /* Formulário de movimentação (modal) */

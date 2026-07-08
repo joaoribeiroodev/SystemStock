@@ -1,23 +1,24 @@
 
 'use strict';
 
-/* ──────────────────────────────────────────
-   Estado global
-────────────────────────────────────────── */
 let produtoAtual = null;
 let todosProdutos = [];
+let todasSolicitacoes = [];
 
-/* ──────────────────────────────────────────
-   Inicialização
-────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     configurarLimitesDataEdicao();
-    carregarProdutos();
+    try {
+        await carregarProdutos();
+    } catch (e) {
+        console.warn('[gerenciamento.js] falha ao carregar produtos antes das solicitações:', e);
+    }
+    carregarSolicitacoes();
     inicializarBusca();
     inicializarSidebar();
     inicializarCalculoTotal();
     inicializarMovimentacao();
     inicializarModalMovimentacao();
+    inicializarFiltroSolicitacoes();
     fecharModalAoClicarFora();
 });
 
@@ -43,6 +44,202 @@ function formatarNivel(nivel) {
 
 function classeBadgeNivel(nivel) {
     return nivel === 'BAIXO' ? 'baixo' : 'normal';
+}
+
+
+function formatarStatusSolicitacao(status) {
+    const mapa = {
+        PENDENTE: 'Pendente',
+        EM_ANDAMENTO: 'Em andamento',
+        ATENDIDA: 'Atendida',
+        CANCELADA: 'Cancelada'
+    };
+    return mapa[status] || status;
+}
+
+function classeBadgeSolicitacao(status) {
+    const mapa = {
+        PENDENTE: 'pendente',
+        EM_ANDAMENTO: 'em-andamento',
+        ATENDIDA: 'atendida',
+        CANCELADA: 'cancelada'
+    };
+    return mapa[status] || 'pendente';
+}
+
+function formatarDataHora(valor) {
+    if (!valor) return '—';
+    try {
+        let data = String(valor).trim();
+        if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/.test(data)) {
+            data = data.replace(' ', 'T');
+        }
+        const d = new Date(data);
+        if (Number.isNaN(d.getTime())) return valor;
+        return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    } catch {
+        return valor;
+    }
+}
+
+async function carregarSolicitacoes() {
+    const status = document.getElementById('filtroStatusSolicitacao')?.value || '';
+    mostrarEstadoSolicitacoes('carregando');
+
+    try {
+        const qs = status ? `?status=${encodeURIComponent(status)}` : '';
+        const res = await fetch(`../api/solicitacoes${qs}`);
+
+        if (!res.ok) throw new Error(`Servidor retornou status ${res.status}`);
+
+        const dados = await res.json();
+        todasSolicitacoes = dados || [];
+
+        atualizarBadgeSolicitacoesPendentes();
+
+        if (todasSolicitacoes.length === 0) {
+            mostrarEstadoSolicitacoes('vazio');
+            return;
+        }
+
+        renderizarTabelaSolicitacoes(todasSolicitacoes);
+        mostrarEstadoSolicitacoes('tabela');
+
+    } catch (err) {
+        console.error('[gerenciamento.js] Erro ao carregar solicitações:', err);
+        const el = document.getElementById('solMensagemErro');
+        if (el) el.textContent = `Erro: ${err.message}`;
+        mostrarEstadoSolicitacoes('erro');
+    }
+}
+
+function atualizarBadgeSolicitacoesPendentes() {
+    const badge = document.getElementById('badgeSolicitacoesPendentes');
+    if (!badge) return;
+
+    const pendentes = todasSolicitacoes.filter(s => s.status === 'PENDENTE').length;
+    if (pendentes > 0) {
+        badge.textContent = String(pendentes);
+        badge.style.display = 'inline-flex';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function mostrarEstadoSolicitacoes(estado) {
+    const carregando = document.getElementById('solEstadoCarregando');
+    const vazio = document.getElementById('solEstadoVazio');
+    const erro = document.getElementById('solEstadoErro');
+    const tabela = document.getElementById('solTabelaWrapper');
+    if (carregando) carregando.style.display = estado === 'carregando' ? 'flex' : 'none';
+    if (vazio) vazio.style.display = estado === 'vazio' ? 'flex' : 'none';
+    if (erro) erro.style.display = estado === 'erro' ? 'flex' : 'none';
+    if (tabela) tabela.style.display = estado === 'tabela' ? 'block' : 'none';
+}
+
+function renderizarTabelaSolicitacoes(lista) {
+    const tbody = document.getElementById('corpoTabelaSolicitacoes');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!lista || lista.length === 0) {
+        tbody.innerHTML = `
+            <tr class="sem-dados">
+                <td colspan="8">Nenhuma solicitação encontrada para este filtro.</td>
+            </tr>`;
+        return;
+    }
+
+    lista.forEach(sol => {
+        const tr = document.createElement('tr');
+        const aberta = sol.status === 'PENDENTE' || sol.status === 'EM_ANDAMENTO';
+
+        tr.innerHTML = `
+            <td>
+                <strong>${escapeHtml(sol.nomeProduto)}</strong><br>
+                <code style="font-size:0.75rem; color: var(--text-secondary);">${escapeHtml(sol.codigoBarras)}</code>
+            </td>
+            <td>${escapeHtml(localProdutoPorCodigo(sol.codigoBarras))}</td>
+            <td>${sol.quantidadeAtual}</td>
+            <td>${sol.quantidadeMinima}</td>
+            <td>${sol.quantidadeSugerida}</td>
+            <td><span class="badge badge-${classeBadgeSolicitacao(sol.status)}">${formatarStatusSolicitacao(sol.status)}</span></td>
+            <td>${formatarDataHora(sol.criadoEm)}</td>
+            <td class="acoes-solicitacao"></td>
+        `;
+
+        const tdAcoes = tr.querySelector('.acoes-solicitacao');
+        if (aberta) {
+            if (sol.status === 'PENDENTE') {
+                tdAcoes.appendChild(criarBotaoSolicitacao('Em andamento', 'EM_ANDAMENTO', sol.id, 'btn-gerenciar'));
+            }
+            tdAcoes.appendChild(criarBotaoSolicitacao('Atendida', 'ATENDIDA', sol.id, 'btn-gerenciar'));
+            tdAcoes.appendChild(criarBotaoSolicitacao('Cancelar', 'CANCELADA', sol.id, 'btn-gerenciar btn-cancelar-sol'));
+        } else {
+            tdAcoes.innerHTML = '<span style="color: var(--text-muted); font-size:0.8rem;">—</span>';
+        }
+
+        tbody.appendChild(tr);
+    });
+}
+
+function criarBotaoSolicitacao(rotulo, novoStatus, id, classe) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = classe;
+    btn.textContent = rotulo;
+    btn.style.marginRight = '0.4rem';
+    btn.addEventListener('click', () => atualizarStatusSolicitacao(id, novoStatus));
+    return btn;
+}
+
+function localProdutoPorCodigo(codigoBarras) {
+    const produto = todosProdutos.find(p => p.codigoBarras === codigoBarras);
+    if (!produto) return '—';
+    const partes = [produto.prateleira, produto.localArmazenamento].filter(Boolean);
+    return partes.length ? partes.join(' — ') : '—';
+}
+
+async function atualizarStatusSolicitacao(id, novoStatus) {
+    const rotulos = {
+        EM_ANDAMENTO: 'marcar como Em andamento',
+        ATENDIDA: 'marcar como Atendida',
+        CANCELADA: 'cancelar'
+    };
+
+    if (novoStatus === 'CANCELADA' && !confirm('Tem certeza que deseja cancelar esta solicitação de compra?')) {
+        return;
+    }
+
+    const params = new URLSearchParams();
+    params.append('id', id);
+    params.append('status', novoStatus);
+
+    try {
+        const res = await fetch('../api/solicitacoes/atualizar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+        });
+
+        const dados = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(dados.erro || `Status ${res.status}`);
+        }
+
+        await carregarSolicitacoes();
+
+    } catch (err) {
+        console.error('[gerenciamento.js] Erro ao atualizar solicitação:', err);
+        alert(`Não foi possível ${rotulos[novoStatus] || 'atualizar'} a solicitação: ${err.message}`);
+    }
+}
+
+function inicializarFiltroSolicitacoes() {
+    const select = document.getElementById('filtroStatusSolicitacao');
+    if (!select) return;
+    select.addEventListener('change', () => carregarSolicitacoes());
 }
 
 /* ──────────────────────────────────────────
@@ -423,6 +620,7 @@ async function registrarMovimentacao() {
 
         mostrarFeedback('mov-feedback', 'sucesso', '✓ Movimentação registrada com sucesso!');
         await carregarProdutos();
+        await carregarSolicitacoes();
         setTimeout(fecharModalMovimentacao, 1200);
 
     } catch (err) {
@@ -468,6 +666,8 @@ function abrirModal(produto) {
     document.getElementById('det-marca').textContent            = produto.marca         || '—';
     document.getElementById('det-quantidade').textContent        = produto.quantidade    ?? '—';
     document.getElementById('det-quantidadeMinima').textContent  = produto.quantidadeMinima ?? '—';
+    document.getElementById('det-prateleira').textContent         = produto.prateleira || '—';
+    document.getElementById('det-localArmazenamento').textContent = produto.localArmazenamento || '—';
     document.getElementById('det-valor').textContent              = `R$ ${parseFloat(produto.valor).toFixed(2)}`;
     document.getElementById('det-total').textContent            = `R$ ${parseFloat(produto.total).toFixed(2)}`;
     document.getElementById('det-dataFabricacao').textContent     = formatarData(produto.dataFabricacao);
@@ -485,6 +685,8 @@ function abrirModal(produto) {
     document.getElementById('edit-total').value                = parseFloat(produto.total).toFixed(2);
     document.getElementById('edit-dataFabricacao').value       = produto.dataFabricacao || '';
     document.getElementById('edit-dataVencimento').value       = produto.dataVencimento || '';
+    document.getElementById('edit-prateleira').value           = produto.prateleira || '';
+    document.getElementById('edit-localArmazenamento').value   = produto.localArmazenamento || '';
     configurarLimitesDataEdicao();
 
     document.getElementById('excluir-nome').textContent = produto.nomeProduto;
@@ -554,6 +756,8 @@ async function salvarEdicao() {
     params.append('valor',              document.getElementById('edit-valor').value);
     params.append('dataFabricacao',     document.getElementById('edit-dataFabricacao').value);
     params.append('dataVencimento',     document.getElementById('edit-dataVencimento').value);
+    params.append('prateleira',         document.getElementById('edit-prateleira').value);
+    params.append('localArmazenamento', document.getElementById('edit-localArmazenamento').value);
 
     try {
         const res = await fetch('../api/produtos/atualizar', {
@@ -571,6 +775,7 @@ async function salvarEdicao() {
         mostrarFeedback('edit-feedback', 'sucesso', '✓ Produto atualizado com sucesso!');
 
         await carregarProdutos();
+        await carregarSolicitacoes();
         setTimeout(fecharModal, 1200);
 
     } catch (err) {
@@ -685,3 +890,4 @@ window.salvarEdicao            = salvarEdicao;
 window.confirmarExclusao       = confirmarExclusao;
 window.atualizarBotaoExcluir   = atualizarBotaoExcluir;
 window.carregarProdutos        = carregarProdutos;
+window.carregarSolicitacoes    = carregarSolicitacoes;

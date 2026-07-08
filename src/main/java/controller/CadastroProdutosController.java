@@ -40,6 +40,8 @@ public class CadastroProdutosController extends HttpServlet {
         String qtdStr = request.getParameter("quantidade");
         String qtdMinStr = request.getParameter("quantidadeMinima");
         String valorStr = request.getParameter("valor");
+        String prateleira = request.getParameter("prateleira");
+        String localArmazenamento = request.getParameter("localArmazenamento");
 
         if (ValidacaoProduto.isBlank(nomeProduto) || ValidacaoProduto.isBlank(fabricante)
                 || ValidacaoProduto.isBlank(marca) || ValidacaoProduto.isBlank(dataFabricacao)
@@ -85,6 +87,8 @@ public class CadastroProdutosController extends HttpServlet {
         produto.setQuantidadeMinima(quantidadeMinima);
         produto.setValor(valor.toPlainString());
         produto.setTotal(valor.multiply(BigDecimal.valueOf(quantidade)).toPlainString());
+        produto.setPrateleira(ValidacaoProduto.isBlank(prateleira) ? null : prateleira.trim());
+        produto.setLocalArmazenamento(ValidacaoProduto.isBlank(localArmazenamento) ? null : localArmazenamento.trim());
         produto.setStatus("ENTRADA");
 
         if (dao.salvarComMovimentacaoInicial(produto)) {

@@ -69,7 +69,10 @@ public class CadastroProdutoDAO {
     //   Salvar (INSERT)
 
     public boolean salvar(CadastroProdutoModel produto) {
-        String sql = "INSERT INTO produtos " + "(codigo_barras, nome_produto, fabricante, marca, " + " data_fabricacao, data_vencimento, quantidade, quantidade_minima, valor, total, status) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO produtos " + "(codigo_barras, nome_produto, fabricante, marca, "
+                + " data_fabricacao, data_vencimento, quantidade, quantidade_minima, valor, total, "
+                + " prateleira, local_armazenamento, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -83,7 +86,9 @@ public class CadastroProdutoDAO {
             stmt.setLong(8, produto.getQuantidadeMinima());
             stmt.setBigDecimal(9, new BigDecimal(produto.getValor()));
             stmt.setBigDecimal(10, new BigDecimal(produto.getTotal()));
-            stmt.setString(11, produto.getStatus().toUpperCase());
+            stmt.setString(11, produto.getPrateleira());
+            stmt.setString(12, produto.getLocalArmazenamento());
+            stmt.setString(13, produto.getStatus().toUpperCase());
 
             stmt.executeUpdate();
             return true;
@@ -99,8 +104,8 @@ public class CadastroProdutoDAO {
     public boolean salvarComMovimentacaoInicial(CadastroProdutoModel produto) {
         String sqlProduto = "INSERT INTO produtos "
                 + "(codigo_barras, nome_produto, fabricante, marca, data_fabricacao, data_vencimento, "
-                + "quantidade, quantidade_minima, valor, total, status) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "quantidade, quantidade_minima, valor, total, prateleira, local_armazenamento, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlMov = "INSERT INTO movimentacoes (produto_id, tipo, quantidade) VALUES (?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getConnection()) {
@@ -122,7 +127,9 @@ public class CadastroProdutoDAO {
                     stmt.setLong(8, produto.getQuantidadeMinima());
                     stmt.setBigDecimal(9, new BigDecimal(produto.getValor()));
                     stmt.setBigDecimal(10, new BigDecimal(produto.getTotal()));
-                    stmt.setString(11, produto.getStatus().toUpperCase());
+                    stmt.setString(11, produto.getPrateleira());
+                    stmt.setString(12, produto.getLocalArmazenamento());
+                    stmt.setString(13, produto.getStatus().toUpperCase());
                     stmt.executeUpdate();
 
                     try (ResultSet keys = stmt.getGeneratedKeys()) {
@@ -140,6 +147,10 @@ public class CadastroProdutoDAO {
                     psMov.setLong(3, produto.getQuantidade());
                     psMov.executeUpdate();
                 }
+
+                // Produto já pode nascer abaixo do mínimo (ex.: cadastro de reposição parcial).
+                new SolicitacaoCompraDAO().verificarNivelEstoque(conn, produtoId, produto.getCodigoBarras(),
+                        produto.getNomeProduto(), produto.getQuantidade(), produto.getQuantidadeMinima());
 
                 conn.commit();
                 return true;
@@ -192,6 +203,8 @@ public class CadastroProdutoDAO {
                     p.setQuantidadeMinima(rs.getLong("quantidade_minima"));
                     p.setValor(rs.getBigDecimal("valor").toPlainString());
                     p.setTotal(rs.getBigDecimal("total").toPlainString());
+                    p.setPrateleira(rs.getString("prateleira"));
+                    p.setLocalArmazenamento(rs.getString("local_armazenamento"));
                     p.setStatus(rs.getString("status"));
 
                     // Lê o status do banco (opcional, já que todos aqui serão true)
@@ -213,24 +226,56 @@ public class CadastroProdutoDAO {
       // Atualizar (UPDATE) — identificado por codigoBarras
 
     public boolean atualizar(CadastroProdutoModel produto) {
-        String sql = "UPDATE produtos SET " + "nome_produto = ?, fabricante = ?, marca = ?, " + "data_fabricacao = ?, data_vencimento = ?, " + "quantidade = ?, quantidade_minima = ?, valor = ?, total = ?, status = ? " + "WHERE codigo_barras = ?";
+        String sql = "UPDATE produtos SET " + "nome_produto = ?, fabricante = ?, marca = ?, "
+                + "data_fabricacao = ?, data_vencimento = ?, "
+                + "quantidade = ?, quantidade_minima = ?, valor = ?, total = ?, "
+                + "prateleira = ?, local_armazenamento = ?, status = ? "
+                + "WHERE codigo_barras = ?";
 
-        try (Connection conn = ConnectionFactory.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            if (conn == null) {
+                return false;
+            }
 
-            stmt.setString(1, produto.getNomeProduto());
-            stmt.setString(2, produto.getFabricante());
-            stmt.setString(3, produto.getMarca());
-            stmt.setDate(4, Date.valueOf(produto.getDataFabricacao()));
-            stmt.setDate(5, Date.valueOf(produto.getDataVencimento()));
-            stmt.setLong(6, produto.getQuantidade());
-            stmt.setLong(7, produto.getQuantidadeMinima());
-            stmt.setBigDecimal(8, new BigDecimal(produto.getValor()));
-            stmt.setBigDecimal(9, new BigDecimal(produto.getTotal()));
-            stmt.setString(10, produto.getStatus().toUpperCase());
-            stmt.setString(11, produto.getCodigoBarras());
+            conn.setAutoCommit(false);
+            try {
+                boolean atualizado;
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, produto.getNomeProduto());
+                    stmt.setString(2, produto.getFabricante());
+                    stmt.setString(3, produto.getMarca());
+                    stmt.setDate(4, Date.valueOf(produto.getDataFabricacao()));
+                    stmt.setDate(5, Date.valueOf(produto.getDataVencimento()));
+                    stmt.setLong(6, produto.getQuantidade());
+                    stmt.setLong(7, produto.getQuantidadeMinima());
+                    stmt.setBigDecimal(8, new BigDecimal(produto.getValor()));
+                    stmt.setBigDecimal(9, new BigDecimal(produto.getTotal()));
+                    stmt.setString(10, produto.getPrateleira());
+                    stmt.setString(11, produto.getLocalArmazenamento());
+                    stmt.setString(12, produto.getStatus().toUpperCase());
+                    stmt.setString(13, produto.getCodigoBarras());
 
-            return stmt.executeUpdate() > 0;
+                    atualizado = stmt.executeUpdate() > 0;
+                }
 
+                // A edição pode alterar a quantidade mínima: reavalia se é preciso
+                // emitir ou encerrar automaticamente uma solicitação de compra.
+                if (atualizado) {
+                    int produtoId = buscarIdPorCodigo(conn, produto.getCodigoBarras());
+                    if (produtoId > 0) {
+                        new SolicitacaoCompraDAO().verificarNivelEstoque(conn, produtoId, produto.getCodigoBarras(),
+                                produto.getNomeProduto(), produto.getQuantidade(), produto.getQuantidadeMinima());
+                    }
+                }
+
+                conn.commit();
+                return atualizado;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
         } catch (SQLException e) {
             System.err.println("[CadastroProdutoDAO] Erro ao atualizar produto: " + e.getMessage());
             e.printStackTrace();
@@ -384,6 +429,8 @@ public class CadastroProdutoDAO {
                 p.setQuantidadeMinima(rs.getLong("quantidade_minima"));
                 p.setValor(rs.getBigDecimal("valor").toPlainString());
                 p.setTotal(rs.getBigDecimal("total").toPlainString());
+                p.setPrateleira(rs.getString("prateleira"));
+                p.setLocalArmazenamento(rs.getString("local_armazenamento"));
                 p.setStatus(rs.getString("status"));
                 p.setAtivo(rs.getBoolean("ativo"));
                 return p;
@@ -410,7 +457,8 @@ public class CadastroProdutoDAO {
             return "Tipo de movimentação inválido.";
         }
 
-        String sqlSelect = "SELECT id, quantidade, valor FROM produtos WHERE codigo_barras = ? AND ativo = TRUE FOR UPDATE";
+        String sqlSelect = "SELECT id, quantidade, valor, quantidade_minima, nome_produto "
+                + "FROM produtos WHERE codigo_barras = ? AND ativo = TRUE FOR UPDATE";
         String sqlUpdate = "UPDATE produtos SET quantidade = ?, total = ?, status = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?";
 
         try (Connection conn = ConnectionFactory.getConnection()) {
@@ -422,6 +470,8 @@ public class CadastroProdutoDAO {
 
             int produtoId;
             long quantidadeAtual;
+            long quantidadeMinima;
+            String nomeProduto;
             BigDecimal valorUnit;
 
             try (PreparedStatement psSelect = conn.prepareStatement(sqlSelect)) {
@@ -434,6 +484,8 @@ public class CadastroProdutoDAO {
                     produtoId = rs.getInt("id");
                     quantidadeAtual = rs.getLong("quantidade");
                     valorUnit = rs.getBigDecimal("valor");
+                    quantidadeMinima = rs.getLong("quantidade_minima");
+                    nomeProduto = rs.getString("nome_produto");
                 }
             }
 
@@ -463,6 +515,11 @@ public class CadastroProdutoDAO {
                 psMov.setLong(3, qtd);
                 psMov.executeUpdate();
             }
+
+            // Emite (SAÍDA que derruba o estoque abaixo do mínimo) ou encerra
+            // automaticamente (ENTRADA que repõe o estoque) a solicitação de compra.
+            new SolicitacaoCompraDAO().verificarNivelEstoque(conn, produtoId, codigoBarras.trim(),
+                    nomeProduto, novaQuantidade, quantidadeMinima);
 
             conn.commit();
             return null;

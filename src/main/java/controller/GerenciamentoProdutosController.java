@@ -48,6 +48,8 @@ public class GerenciamentoProdutosController extends HttpServlet {
             String dataVencimento = request.getParameter("dataVencimento");
             String valorStr = request.getParameter("valor");
             String qtdMinStr = request.getParameter("quantidadeMinima");
+            String prateleira = request.getParameter("prateleira");
+            String localArmazenamento = request.getParameter("localArmazenamento");
 
             if (ValidacaoProduto.isBlank(nomeProduto) || ValidacaoProduto.isBlank(fabricante)
                     || ValidacaoProduto.isBlank(marca) || ValidacaoProduto.isBlank(dataFabricacao)
@@ -94,6 +96,8 @@ public class GerenciamentoProdutosController extends HttpServlet {
             produto.setQuantidadeMinima(quantidadeMinima);
             produto.setValor(valor.toPlainString());
             produto.setTotal(valor.multiply(BigDecimal.valueOf(quantidadeAtual)).toPlainString());
+            produto.setPrateleira(ValidacaoProduto.isBlank(prateleira) ? null : prateleira.trim());
+            produto.setLocalArmazenamento(ValidacaoProduto.isBlank(localArmazenamento) ? null : localArmazenamento.trim());
             produto.setStatus(existente.getStatus() != null ? existente.getStatus() : "ENTRADA");
 
             boolean sucesso = dao.atualizar(produto);

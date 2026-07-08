@@ -12,6 +12,8 @@ public class CadastroProdutoModel {
     private long quantidadeMinima;
     private String valor;
     private String total;
+    private String prateleira;
+    private String localArmazenamento;
     private String status;
     private boolean ativo;
 
@@ -111,6 +113,24 @@ public class CadastroProdutoModel {
 
     public void setTotal(String total) {
         this.total = total;
+    }
+
+    /* ── prateleira ── */
+    public String getPrateleira() {
+        return prateleira;
+    }
+
+    public void setPrateleira(String prateleira) {
+        this.prateleira = prateleira;
+    }
+
+    /* ── localArmazenamento ── */
+    public String getLocalArmazenamento() {
+        return localArmazenamento;
+    }
+
+    public void setLocalArmazenamento(String localArmazenamento) {
+        this.localArmazenamento = localArmazenamento;
     }
 
     /* ── status ── */
