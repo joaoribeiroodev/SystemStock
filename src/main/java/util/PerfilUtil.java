@@ -16,12 +16,10 @@ public final class PerfilUtil {
         return TESTER.equalsIgnoreCase(normalizar(perfil));
     }
 
-    /** Acesso ao restante do sistema (estoque, produtos, gerenciamento). */
     public static boolean podeAcessarSistema(String perfil) {
         return isAdmin(perfil) || isTester(perfil);
     }
 
-    /** Apenas ADMIN pode cadastrar novos usuários. */
     public static boolean podeCadastrarUsuario(String perfil) {
         return isAdmin(perfil);
     }

@@ -10,7 +10,6 @@ import java.util.List;
 
 public class CadastroProdutoDAO {
 
-    /** Situação do código no banco (inclui registros inativos, que ainda ocupam UNIQUE). */
     public enum ExistenciaCodigoBarras {
         DISPONIVEL,
         JA_REGISTRADO_ATIVO,
@@ -51,7 +50,6 @@ public class CadastroProdutoDAO {
                 return codigo;
             }
 
-            // Registros inativos (soft delete antigo) ainda ocupam UNIQUE — remove para reutilizar o código
             if (existencia == ExistenciaCodigoBarras.JA_REGISTRADO_INATIVO) {
                 try {
                     if (removerProdutoDefinitivamente(codigo)) {
@@ -66,7 +64,6 @@ public class CadastroProdutoDAO {
         return String.format("%08d", System.currentTimeMillis() % 100_000_000L);
     }
 
-    //   Salvar (INSERT)
 
     public boolean salvar(CadastroProdutoModel produto) {
         String sql = "INSERT INTO produtos " + "(codigo_barras, nome_produto, fabricante, marca, "
@@ -100,7 +97,6 @@ public class CadastroProdutoDAO {
         }
     }
 
-    /** Salva produto e movimentação inicial na mesma transação. */
     public boolean salvarComMovimentacaoInicial(CadastroProdutoModel produto) {
         String sqlProduto = "INSERT INTO produtos "
                 + "(codigo_barras, nome_produto, fabricante, marca, data_fabricacao, data_vencimento, "
@@ -148,7 +144,6 @@ public class CadastroProdutoDAO {
                     psMov.executeUpdate();
                 }
 
-                // Produto já pode nascer abaixo do mínimo (ex.: cadastro de reposição parcial).
                 new SolicitacaoCompraDAO().verificarNivelEstoque(conn, produtoId, produto.getCodigoBarras(),
                         produto.getNomeProduto(), produto.getQuantidade(), produto.getQuantidadeMinima());
 
@@ -168,12 +163,10 @@ public class CadastroProdutoDAO {
     }
 
 
-     //  CORRIGIDO: Filtra apenas produtos ativos (Soft Delete)
 
     public List<CadastroProdutoModel> listarComFiltro(String nome, String tipo, String data) {
         List<CadastroProdutoModel> lista = new ArrayList<>();
 
-        // ⚠️ MUDANÇA AQUI: Troquei WHERE 1=1 por WHERE ativo = TRUE
         StringBuilder sql = new StringBuilder("SELECT * FROM produtos WHERE ativo = TRUE");
 
 
@@ -207,7 +200,6 @@ public class CadastroProdutoDAO {
                     p.setLocalArmazenamento(rs.getString("local_armazenamento"));
                     p.setStatus(rs.getString("status"));
 
-                    // Lê o status do banco (opcional, já que todos aqui serão true)
                     p.setAtivo(rs.getBoolean("ativo"));
 
                     lista.add(p);
@@ -223,7 +215,6 @@ public class CadastroProdutoDAO {
     }
 
 
-      // Atualizar (UPDATE) — identificado por codigoBarras
 
     public boolean atualizar(CadastroProdutoModel produto) {
         String sql = "UPDATE produtos SET " + "nome_produto = ?, fabricante = ?, marca = ?, "
@@ -258,8 +249,6 @@ public class CadastroProdutoDAO {
                     atualizado = stmt.executeUpdate() > 0;
                 }
 
-                // A edição pode alterar a quantidade mínima: reavalia se é preciso
-                // emitir ou encerrar automaticamente uma solicitação de compra.
                 if (atualizado) {
                     int produtoId = buscarIdPorCodigo(conn, produto.getCodigoBarras());
                     if (produtoId > 0) {
@@ -284,7 +273,6 @@ public class CadastroProdutoDAO {
     }
 
 
-     //  Excluir por Código de Barras (remove produto e movimentações)
 
     public boolean excluirPorCodigo(String codigoBarras) throws SQLException {
         if (codigoBarras == null || codigoBarras.isBlank()) {
@@ -443,10 +431,7 @@ public class CadastroProdutoDAO {
         }
     }
 
-    /**
-     * Registra entrada/saída, atualiza estoque e total do produto em uma transação.
-     * @return null em sucesso, ou mensagem de erro
-     */
+  
     public String registrarMovimentacao(String codigoBarras, String tipo, long qtd) {
         if (codigoBarras == null || codigoBarras.isBlank() || tipo == null || tipo.isBlank() || qtd <= 0) {
             return "Informe produto, tipo e quantidade válidos (maior que zero).";
@@ -516,8 +501,7 @@ public class CadastroProdutoDAO {
                 psMov.executeUpdate();
             }
 
-            // Emite (SAÍDA que derruba o estoque abaixo do mínimo) ou encerra
-            // automaticamente (ENTRADA que repõe o estoque) a solicitação de compra.
+        
             new SolicitacaoCompraDAO().verificarNivelEstoque(conn, produtoId, codigoBarras.trim(),
                     nomeProduto, novaQuantidade, quantidadeMinima);
 

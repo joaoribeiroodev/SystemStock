@@ -24,7 +24,6 @@ public class AuthFilter implements Filter {
 
         String uri = req.getRequestURI();
 
-        // ── Recursos públicos — libera sem verificar sessão ───────────────────
         if (uri.contains("index.html")
                 || uri.contains("login")
                 || uri.contains("logout")
@@ -34,11 +33,9 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // ── Verifica sessão ───────────────────────────────────────────────────
         HttpSession session = req.getSession(false);
 
         if (session == null || session.getAttribute("usuario") == null) {
-            // Requisições AJAX não devem receber um redirect para HTML
             String xRequestedWith = req.getHeader("X-Requested-With");
             if ("XMLHttpRequest".equals(xRequestedWith)) {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -48,7 +45,6 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // ── Cadastro de usuários — somente ADMIN ─────────────────────────────
         if (isRotaCadastroUsuario(uri)) {
             String perfil = (String) session.getAttribute("perfil");
             if (!PerfilUtil.podeCadastrarUsuario(perfil)) {

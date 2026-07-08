@@ -12,7 +12,6 @@
 
 <body>
 
-<!-- ===== HEADER ===== -->
 <header id="header">
     <h1 id="tituloCadastro">SystemStock</h1>
     <nav id="menu">
@@ -25,10 +24,8 @@
     </nav>
 </header>
 
-<!-- ===== LAYOUT PRINCIPAL ===== -->
 <div class="layout">
 
-    <!-- Sidebar de Navegação -->
     <aside class="sidebar">
         <p class="sidebar-titulo">Seções</p>
         <nav class="sidebar-nav">
@@ -48,14 +45,11 @@
         </nav>
     </aside>
 
-    <!-- Conteúdo Principal -->
     <main class="conteudo-principal">
 
-        <!-- ===== SEÇÃO: PRODUTOS ===== -->
         <section id="secao-produtos" class="secao">
             <div class="card-glass">
 
-                <!-- Cabeçalho com busca -->
                 <div class="card-header">
                     <h2 class="card-titulo">Gerenciamento de Produtos</h2>
                     <div class="toolbar">
@@ -76,27 +70,23 @@
                     </div>
                 </div>
 
-                <!-- Estado: Carregando -->
                 <div id="estadoCarregando" class="estado-vazio">
                     <div class="spinner"></div>
                     <p>Carregando produtos...</p>
                 </div>
 
-                <!-- Estado: Sem dados -->
                 <div id="estadoVazio" class="estado-vazio" style="display:none;">
                     <span class="estado-icone">📭</span>
                     <p>Nenhum produto encontrado.</p>
                     <a href="cadastroProduto.html" class="btn-novo" style="margin-top:1rem;">Cadastrar Produto</a>
                 </div>
 
-                <!-- Estado: Erro -->
                 <div id="estadoErro" class="estado-vazio" style="display:none;">
                     <span class="estado-icone">⚠️</span>
                     <p id="mensagemErro">Erro ao carregar produtos.</p>
                     <button onclick="carregarProdutos()" class="btn-novo" style="margin-top:1rem;">Tentar novamente</button>
                 </div>
 
-                <!-- Tabela de Produtos -->
                 <div class="tabela-wrapper" id="tabelaWrapper" style="display:none;">
                     <table id="tabelaGerenciamento">
                         <thead>
@@ -118,7 +108,6 @@
             </div>
         </section>
 
-        <!-- ===== SEÇÃO: SOLICITAÇÕES DE COMPRA ===== -->
         <section id="secao-solicitacoes" class="secao">
             <div class="card-glass">
 
@@ -140,26 +129,22 @@
                     cadastrada, e encerradas automaticamente assim que o estoque é reabastecido.
                 </p>
 
-                <!-- Estado: Carregando -->
                 <div id="solEstadoCarregando" class="estado-vazio">
                     <div class="spinner"></div>
                     <p>Carregando solicitações...</p>
                 </div>
 
-                <!-- Estado: Sem dados -->
                 <div id="solEstadoVazio" class="estado-vazio" style="display:none;">
                     <span class="estado-icone">🛒</span>
                     <p>Nenhuma solicitação de compra encontrada.</p>
                 </div>
 
-                <!-- Estado: Erro -->
                 <div id="solEstadoErro" class="estado-vazio" style="display:none;">
                     <span class="estado-icone">⚠️</span>
                     <p id="solMensagemErro">Erro ao carregar solicitações.</p>
                     <button onclick="carregarSolicitacoes()" class="btn-novo" style="margin-top:1rem;">Tentar novamente</button>
                 </div>
 
-                <!-- Tabela de Solicitações -->
                 <div class="tabela-wrapper" id="solTabelaWrapper" style="display:none;">
                     <table id="tabelaSolicitacoes">
                         <thead>
@@ -185,7 +170,6 @@
     </main>
 </div>
 
-<!-- ===== MODAL: MOVIMENTAÇÃO ===== -->
 <div id="modalMovimentacaoOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalMovimentacaoTitulo">
     <div class="modal modal-movimentacao">
         <div class="modal-header">
@@ -237,11 +221,9 @@
     </div>
 </div>
 
-<!-- ===== MODAL DE CRUD ===== -->
 <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalNomeProduto">
     <div class="modal">
 
-        <!-- Modal Header -->
         <div class="modal-header">
             <div>
                 <p class="modal-subtitulo">Gerenciar Produto</p>
@@ -254,14 +236,12 @@
             </button>
         </div>
 
-        <!-- Abas -->
         <div class="modal-abas">
             <button class="btn-aba ativo" data-aba="detalhes" onclick="mudarAba('detalhes')">Detalhes</button>
             <button class="btn-aba" data-aba="editar" onclick="mudarAba('editar')">Editar</button>
             <button class="btn-aba btn-aba-perigo" data-aba="excluir" onclick="mudarAba('excluir')">Excluir</button>
         </div>
 
-        <!-- Aba: Detalhes -->
         <div id="aba-detalhes" class="aba-conteudo ativo">
             <div class="detalhes-grid">
                 <div class="detalhe-item">
@@ -315,7 +295,6 @@
             </div>
         </div>
 
-        <!-- Aba: Editar -->
         <div id="aba-editar" class="aba-conteudo">
             <div class="form-edicao">
                 <input type="hidden" id="edit-codigoBarras">
@@ -377,7 +356,6 @@
             </div>
         </div>
 
-        <!-- Aba: Excluir -->
         <div id="aba-excluir" class="aba-conteudo">
             <div class="excluir-container">
                 <div class="excluir-icone">🗑️</div>
@@ -401,7 +379,6 @@
     </div>
 </div>
 
-<!-- Scripts -->
 <script src="../js/gerenciamento.js"></script>
 <script src="../js/validarLogin.js"></script>
 <script src="../js/logout.js"></script>

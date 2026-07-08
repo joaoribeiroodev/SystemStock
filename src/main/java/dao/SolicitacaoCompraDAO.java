@@ -13,18 +13,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-/**
- * Regras de emissão automática de solicitação de compra.
- *
- * Sempre que o estoque de um produto é alterado (nova movimentação) ou a
- * quantidade mínima é editada, {@link #verificarNivelEstoque} deve ser chamado:
- *  - Se quantidade atual &lt; quantidade mínima, e não existir nenhuma
- *    solicitação ainda aberta (PENDENTE/EM_ANDAMENTO) para o produto, uma
- *    nova solicitação é emitida automaticamente com status PENDENTE.
- *  - Se quantidade atual &gt;= quantidade mínima e existir solicitação aberta,
- *    ela é encerrada automaticamente como ATENDIDA (o reabastecimento
- *    resolveu o motivo da solicitação).
- */
+
 public class SolicitacaoCompraDAO {
 
     public static final String STATUS_PENDENTE     = "PENDENTE";
@@ -37,11 +26,7 @@ public class SolicitacaoCompraDAO {
                 || STATUS_ATENDIDA.equals(status) || STATUS_CANCELADA.equals(status);
     }
 
-    /**
-     * Verifica o nível de estoque de um produto e emite ou encerra
-     * automaticamente a solicitação de compra, dentro de uma conexão/
-     * transação já aberta pelo chamador (não faz commit/rollback).
-     */
+    
     public void verificarNivelEstoque(Connection conn, int produtoId, String codigoBarras,
                                        String nomeProduto, long quantidadeAtual, long quantidadeMinima)
             throws SQLException {
@@ -57,7 +42,6 @@ public class SolicitacaoCompraDAO {
         }
     }
 
-    /** Mesma verificação acima, abrindo sua própria conexão/transação. */
     public void verificarNivelEstoque(int produtoId, String codigoBarras, String nomeProduto,
                                        long quantidadeAtual, long quantidadeMinima) {
         try (Connection conn = ConnectionFactory.getConnection()) {
@@ -99,8 +83,7 @@ public class SolicitacaoCompraDAO {
             return;
         }
 
-        // Sugere repor até o dobro da quantidade mínima, criando uma folga de segurança
-        // em vez de repor apenas o suficiente para tocar o mínimo novamente.
+        
         long quantidadeSugerida = Math.max((quantidadeMinima * 2) - quantidadeAtual, quantidadeMinima);
 
         String sql = "INSERT INTO solicitacoes_compra "
@@ -134,7 +117,6 @@ public class SolicitacaoCompraDAO {
         }
     }
 
-    /** Lista solicitações, mais recentes primeiro. status == null/"" traz todas. */
     public List<SolicitacaoCompraModel> listar(String status) {
         List<SolicitacaoCompraModel> lista = new ArrayList<>();
 
@@ -170,7 +152,6 @@ public class SolicitacaoCompraDAO {
         return lista;
     }
 
-    /** Atualiza o status (e opcionalmente a observação) de uma solicitação. */
     public boolean atualizarStatus(int id, String novoStatus, String observacao) {
         if (id <= 0 || !isStatusValido(novoStatus)) {
             return false;

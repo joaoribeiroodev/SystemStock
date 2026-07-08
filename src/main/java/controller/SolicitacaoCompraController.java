@@ -12,18 +12,7 @@ import util.ValidacaoProduto;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * API de solicitações de compra.
- *
- * GET  /api/solicitacoes              -> lista (aceita ?status=PENDENTE|EM_ANDAMENTO|ATENDIDA|CANCELADA)
- * GET  /api/solicitacoes/contagem     -> {"pendentes": N}
- * POST /api/solicitacoes/atualizar    -> params: id, status, observacao (opcional)
- *
- * As solicitações em si são sempre emitidas/encerradas automaticamente pelo
- * backend (CadastroProdutoDAO) quando o estoque cruza a quantidade mínima;
- * este controller só expõe consulta e mudança manual de status (ex.: marcar
- * "Em andamento" ao fazer o pedido ao fornecedor, ou "Cancelada").
- */
+
 @WebServlet("/api/solicitacoes/*")
 public class SolicitacaoCompraController extends HttpServlet {
 

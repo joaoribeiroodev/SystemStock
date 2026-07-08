@@ -22,9 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     fecharModalAoClicarFora();
 });
 
-/* ──────────────────────────────────────────
-   Nível de estoque (status na listagem)
-────────────────────────────────────────── */
+
 function obterNivel(produto) {
     if (produto.nivel) {
         return produto.nivel;
@@ -242,9 +240,7 @@ function inicializarFiltroSolicitacoes() {
     select.addEventListener('change', () => carregarSolicitacoes());
 }
 
-/* ──────────────────────────────────────────
-   Validação de campos (> 0 e não vazios)
-────────────────────────────────────────── */
+
 function campoVazio(valor) {
     return valor === null || valor === undefined || String(valor).trim() === '';
 }
@@ -349,9 +345,7 @@ function validarFormularioMovimentacao() {
     return null;
 }
 
-/* ──────────────────────────────────────────
-   Carregamento de Produtos
-────────────────────────────────────────── */
+
 async function carregarProdutos() {
     mostrarEstado('carregando');
 
@@ -422,9 +416,6 @@ function resolverCodigoBarrasMovimentacao(texto) {
     return null;
 }
 
-/* ──────────────────────────────────────────
-   Renderização da Tabela
-────────────────────────────────────────── */
 function renderizarTabela(produtos) {
     const tbody = document.getElementById('corpoTabelaGerenciamento');
     tbody.innerHTML = '';
@@ -459,9 +450,7 @@ function renderizarTabela(produtos) {
     });
 }
 
-/* ──────────────────────────────────────────
-   Controle de Estados da UI
-────────────────────────────────────────── */
+
 function mostrarEstado(estado) {
     document.getElementById('estadoCarregando').style.display = estado === 'carregando' ? 'flex' : 'none';
     document.getElementById('estadoVazio').style.display      = estado === 'vazio'      ? 'flex' : 'none';
@@ -469,9 +458,7 @@ function mostrarEstado(estado) {
     document.getElementById('tabelaWrapper').style.display    = estado === 'tabela'     ? 'block' : 'none';
 }
 
-/* ──────────────────────────────────────────
-   Busca / Filtro Local
-────────────────────────────────────────── */
+
 function inicializarBusca() {
     const input = document.getElementById('buscaProduto');
     if (!input) return;
@@ -493,9 +480,6 @@ function inicializarBusca() {
     });
 }
 
-/* ──────────────────────────────────────────
-   Sidebar: destacar link ativo no scroll
-────────────────────────────────────────── */
 function inicializarSidebar() {
     const links = document.querySelectorAll('.sidebar-link');
     const secoes = document.querySelectorAll('.secao');
@@ -527,9 +511,7 @@ function inicializarSidebar() {
     marcarSecaoVisivel();
 }
 
-/* ──────────────────────────────────────────
-   Modal de movimentação
-────────────────────────────────────────── */
+
 function abrirModalMovimentacao(produto) {
     fecharModal();
 
@@ -632,9 +614,6 @@ async function registrarMovimentacao() {
     }
 }
 
-/* ──────────────────────────────────────────
-   Cálculo automático do Total (edição)
-────────────────────────────────────────── */
 function inicializarCalculoTotal() {
     const qty = document.getElementById('edit-quantidade');
     const val = document.getElementById('edit-valor');
@@ -651,9 +630,7 @@ function inicializarCalculoTotal() {
     val.addEventListener('input', recalcular);
 }
 
-/* ──────────────────────────────────────────
-   Modal: Abrir / Fechar / Abas
-────────────────────────────────────────── */
+
 function abrirModal(produto) {
     fecharModalMovimentacao();
     produtoAtual = produto;
@@ -729,9 +706,7 @@ function mudarAba(aba) {
     if (aba === 'excluir') resetConfirmacaoExclusao();
 }
 
-/* ──────────────────────────────────────────
-   CRUD: Salvar Edição
-────────────────────────────────────────── */
+
 async function salvarEdicao() {
     if (!produtoAtual) return;
 
@@ -787,9 +762,6 @@ async function salvarEdicao() {
     }
 }
 
-/* ──────────────────────────────────────────
-   CRUD: Confirmar Exclusão
-────────────────────────────────────────── */
 function resetConfirmacaoExclusao() {
     const checkbox = document.getElementById('excluir-confirmar');
     const btnExcluir = document.getElementById('btnExcluir');
@@ -847,9 +819,7 @@ async function confirmarExclusao() {
     }
 }
 
-/* ──────────────────────────────────────────
-   Utilitários
-────────────────────────────────────────── */
+
 function mostrarFeedback(elementId, tipo, mensagem) {
     const el = document.getElementById(elementId);
     if (!el) return;

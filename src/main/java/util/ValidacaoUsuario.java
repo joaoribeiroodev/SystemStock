@@ -12,7 +12,7 @@ public final class ValidacaoUsuario {
     private ValidacaoUsuario() {
     }
 
-    /** @return null se válida, ou mensagem de erro */
+    // @return null se válida, ou mensagem de erro 
     public static String validarDataNascimento(String data) {
         if (data == null || data.isBlank()) {
             return "Data de nascimento é obrigatória.";
